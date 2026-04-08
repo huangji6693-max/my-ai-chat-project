@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1016" />
+  <meta name="description" content="中文优先的 AI 陪聊应用" />
+  <link rel="manifest" href="/static-v3/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/static-v3/icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="撩咖" />
+  <title>撩咖</title>
+  <link rel="stylesheet" href="/static-v3/styles.css" />
+</head>
+<body>
+  <div id="app-shell">
+
+    <!-- ═══════════════ 登录页 ═══════════════ -->
+    <section class="screen active" data-view="auth">
+      <div class="auth-bg">
+        <div class="auth-orb auth-orb-1"></div>
+        <div class="auth-orb auth-orb-2"></div>
+      </div>
+      <div class="auth-content">
+        <div class="auth-brand">
+          <div class="auth-logo">🐈</div>
+          <div class="auth-brand-name">撩咖</div>
+          <div class="auth-brand-sub">你的专属 AI 伙伴</div>
+        </div>
+
+        <div class="auth-card">
+          <div class="auth-actions">
+            <button class="login-btn btn-primary" id="email-login-btn">
+              <span class="btn-icon">✉</span> 邮箱登录
+            </button>
+            <button class="login-btn btn-secondary" id="phone-entry-btn">
+              <span class="btn-icon">📱</span> 手机号登录
+            </button>
+            <button class="login-btn btn-secondary" id="apple-login-btn">
+              <span class="btn-icon"></span> Apple 登录
+            </button>
+          </div>
+          <label class="agreement-row">
+            <input type="checkbox" id="agreement-checkbox" />
+            <span>已阅读并同意<a href="#" class="link-text">《服务协议》</a>和<a href="#" class="link-text">《隐私政策》</a></span>
+          </label>
+          <button class="feedback-btn" data-demo="意见与反馈入口已预留。">意见与反馈</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 统一账号登录 ═══════════════ -->
+    <section class="screen light-screen" data-view="phone-login">
+      <header class="simple-topbar">
+        <button class="top-icon" data-nav="auth" aria-label="返回">‹</button>
+        <div class="simple-title" id="login-form-title">账号登录</div>
+        <div class="top-icon ghost"></div>
+      </header>
+      <div class="form-page">
+        <div class="form-card">
+          <div class="login-method-tabs" id="login-method-tabs">
+            <button class="login-method-tab active" data-login-method="email">邮箱</button>
+            <button class="login-method-tab" data-login-method="phone">手机号</button>
+            <button class="login-method-tab" data-login-method="apple">Apple</button>
+          </div>
+          <h2 id="login-form-heading">欢迎回来 👋</h2>
+          <p id="login-form-copy">请选择一种方式继续登录，演示版本任意填写即可进入体验。</p>
+          <div class="input-group">
+            <label class="input-label" id="login-identifier-label">账号</label>
+            <input id="phone-number" class="form-input" placeholder="请输入账号" inputmode="text" type="text" />
+          </div>
+          <div class="input-group code-input-group" id="login-secret-group">
+            <div class="input-label-row">
+              <label class="input-label" id="login-secret-label">验证信息</label>
+              <button class="mini-link-btn hidden" id="send-code-btn" type="button">获取验证码</button>
+            </div>
+            <input id="phone-code" class="form-input" placeholder="请输入密码 / 验证码" type="password" />
+          </div>
+          <div class="login-method-tip" id="login-method-tip">当前为演示模式，输入任意内容即可继续。</div>
+          <button class="wide-btn btn-dark" id="phone-login-submit">继续登录</button>
+          <button class="text-link" data-nav="auth">返回其他登录方式</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 主页 ═══════════════ -->
+    <section class="screen dark-screen" data-view="home">
+      <div class="hero-stage" id="home-hero-stage">
+        <!-- 角色大图 -->
+        <div class="hero-avatar-wrap">
+          <img class="hero-avatar-img" id="home-avatar-img" src="" alt="角色头像" />
+        </div>
+
+        <!-- 顶部栏 -->
+        <header class="hero-topbar">
+          <button class="pill-btn" data-nav="membership">✦ 会员中心</button>
+          <div class="hero-actions">
+            <button class="icon-circle" data-nav="discover" aria-label="发现">⌕</button>
+            <button class="icon-circle" id="voice-toggle-btn" aria-label="声音">🔊</button>
+          </div>
+        </header>
+
+        <!-- 角色信息卡 -->
+        <div class="hero-info-card">
+          <div class="hero-tags-row">
+            <span class="hero-tag">角色介绍</span>
+            <span class="hero-tag muted" id="home-character-style">温柔 · 治愈</span>
+          </div>
+          <div class="hero-name-row">
+            <strong id="home-character-name">柳慕然</strong>
+            <button class="ghost-pill" data-nav="create">配置角色</button>
+          </div>
+          <p id="home-character-description">白发、冷白皮、夜景公寓氛围，设定偏温柔强势，会认真接住情绪，也会主动推进对话。</p>
+        </div>
+
+        <!-- 预览对话框 -->
+        <div class="hero-dialog-card" id="home-preview-message">
+          晚上风有点大，你回来的时候记得慢一点。我在这，先听你说今天发生了什么。
+        </div>
+
+        <!-- 角色信息行 -->
+        <div class="hero-meta-row">
+          <div class="hero-meta-left">
+            <strong id="home-character-subname">柳慕然</strong>
+            <span id="home-character-tag">陪伴中</span>
+          </div>
+          <div class="hero-stats">
+            <button class="stat-btn" id="home-fav-btn" title="收藏">♡</button>
+            <button class="stat-btn" data-demo="分享入口已预留。" title="分享">↗</button>
+            <button class="stat-btn" data-demo="评论入口已预留。" title="更多">…</button>
+          </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="home-dock">
+          <button class="dock-icon-btn" data-demo="语音通话入口已预留。" title="语音">☎</button>
+          <button class="dock-main-btn" id="voice-chat-btn">按住说话</button>
+          <button class="dock-icon-btn" id="keyboard-toggle-btn" title="文字">⌨</button>
+          <button class="dock-icon-btn accent" id="quick-send-btn" title="发消息">＋</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 发现页 ═══════════════ -->
+    <section class="screen light-screen" data-view="discover">
+      <header class="page-topbar">
+        <div class="search-shell">
+          <span class="search-icon">⌕</span>
+          <input id="discover-search" placeholder="搜索感兴趣的角色" />
+        </div>
+      </header>
+      <div class="discover-filters" id="discover-tabs">
+        <button class="filter-chip active">推荐</button>
+        <button class="filter-chip">治愈</button>
+        <button class="filter-chip">高冷</button>
+        <button class="filter-chip">校园</button>
+        <button class="filter-chip">都市</button>
+        <button class="filter-chip">幽默</button>
+      </div>
+      <div class="discover-grid" id="discover-grid"></div>
+    </section>
+
+    <!-- ═══════════════ 创建角色 ═══════════════ -->
+    <section class="screen light-screen" data-view="create">
+      <header class="simple-topbar">
+        <button class="top-icon" data-nav="home" aria-label="返回">✕</button>
+        <div class="simple-title">创建角色</div>
+        <button class="top-icon" data-demo="AI 助手稍后接入。">✎</button>
+      </header>
+      <div class="create-page">
+        <div class="create-card">
+          <textarea id="character-idea" placeholder="输入你想创建的角色，比如：高冷但会在深夜默默关心你、偶尔幽默、外表克制、内心很会照顾人。"></textarea>
+          <button class="ai-assist-btn" data-demo="AI 助手稍后接入。">＋ AI 助手</button>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">角色标签</div>
+          <div class="tag-cloud" id="persona-tag-cloud">
+            <button class="tag-pill active" data-tag="高冷">高冷</button>
+            <button class="tag-pill" data-tag="温柔">温柔</button>
+            <button class="tag-pill" data-tag="幽默">幽默</button>
+            <button class="tag-pill" data-tag="黏人">黏人</button>
+            <button class="tag-pill" data-tag="年上">年上</button>
+            <button class="tag-pill" data-tag="会安慰人">会安慰人</button>
+            <button class="tag-pill" data-tag="嘴硬心软">嘴硬心软</button>
+            <button class="tag-pill" data-tag="会鼓励人">会鼓励人</button>
+          </div>
+        </div>
+
+        <div class="template-row">
+          <button class="template-chip" data-template="高冷守护者">高冷守护者</button>
+          <button class="template-chip" data-template="温柔姐姐">温柔姐姐</button>
+          <button class="template-chip" data-template="嘴硬男友">嘴硬男友</button>
+          <button class="template-chip" data-template="幽默搭子">幽默搭子</button>
+        </div>
+
+        <div class="subtab-row">
+          <button class="subtab-btn">模板</button>
+          <button class="subtab-btn">捏形象</button>
+          <button class="subtab-btn active">角色</button>
+          <button class="subtab-btn">故事</button>
+        </div>
+
+        <button class="wide-btn btn-dark" id="save-character-btn">保存当前角色设定</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 会员中心 ═══════════════ -->
+    <section class="screen light-screen" data-view="membership">
+      <header class="simple-topbar">
+        <button class="top-icon" data-nav="home" aria-label="返回">‹</button>
+        <div class="simple-title">会员中心</div>
+        <button class="top-icon" data-demo="更多入口已预留。">⋯</button>
+      </header>
+      <div class="membership-page">
+        <div class="vip-banner">
+          <div>
+            <div class="vip-title">VIP</div>
+            <div class="vip-sub">更完整的陪伴体验</div>
+          </div>
+          <div class="vip-icon">🐈‍⬛</div>
+        </div>
+
+        <div class="benefit-grid">
+          <div class="benefit-item">🗨 畅聊对话模式</div>
+          <div class="benefit-item">🧠 记忆增强</div>
+          <div class="benefit-item">💾 专属角色记忆</div>
+          <div class="benefit-item">📞 更长通话时长</div>
+          <div class="benefit-item">🚫 免广告</div>
+          <div class="benefit-item">🎨 专属生成风格</div>
+        </div>
+
+        <div class="plan-row">
+          <button class="plan-card active" data-plan="月续">
+            <strong>连续包月</strong>
+            <span class="plan-price">¥25</span>
+            <span class="plan-note">最受欢迎</span>
+          </button>
+          <button class="plan-card" data-plan="周卡">
+            <strong>周卡</strong>
+            <span class="plan-price">¥15</span>
+            <span class="plan-note">7天体验</span>
+          </button>
+          <button class="plan-card" data-plan="月卡">
+            <strong>月卡</strong>
+            <span class="plan-price">¥30</span>
+            <span class="plan-note">灵活续费</span>
+          </button>
+        </div>
+
+        <button class="wide-btn btn-yellow" data-demo="会员开通流程已预留。">立即开通</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 互动记录 ═══════════════ -->
+    <section class="screen light-screen" data-view="inbox">
+      <header class="simple-topbar">
+        <div class="simple-title align-left">互动记录</div>
+        <button class="top-icon" data-demo="筛选入口已预留。">☰</button>
+      </header>
+      <div class="segment-row" id="inbox-segments">
+        <button class="segment-btn active">聊过</button>
+        <button class="segment-btn">赞过</button>
+        <button class="segment-btn">消息</button>
+      </div>
+      <div class="list-panel" id="inbox-list">
+        <div class="list-item" data-character="liu">
+          <img class="list-avatar" src="https://api.dicebear.com/9.x/adventurer/svg?seed=LiuMuran&hair=long17&eyes=variant12&skinColor=f2d3b1" alt="柳慕然" />
+          <div class="list-info">
+            <strong>柳慕然</strong>
+            <p>昨晚 23:10 · 继续聊"今天很累"那条对话</p>
+          </div>
+          <span class="list-arrow">›</span>
+        </div>
+        <div class="list-item" data-character="jiang">
+          <img class="list-avatar" src="https://api.dicebear.com/9.x/adventurer/svg?seed=JiangCe&hair=short11&eyes=variant08&skinColor=d5b99e" alt="江策" />
+          <div class="list-info">
+            <strong>江策</strong>
+            <p>今天 09:26 · 你收藏了他的陪伴卡片</p>
+          </div>
+          <span class="list-arrow">›</span>
+        </div>
+        <div class="list-item" data-character="sys">
+          <div class="list-avatar sys-avatar">📢</div>
+          <div class="list-info">
+            <strong>系统通知</strong>
+            <p>你保存了一份新的角色设定，可在"我的角色"中查看</p>
+          </div>
+          <span class="list-arrow">›</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 我的 ═══════════════ -->
+    <section class="screen light-screen" data-view="profile">
+      <header class="simple-topbar">
+        <div class="simple-title align-left">我的</div>
+        <button class="top-icon" data-demo="设置入口已预留。">⚙</button>
+      </header>
+      <div class="profile-page">
+        <div class="profile-hero">
+          <div class="profile-avatar">你</div>
+          <div class="profile-info">
+            <strong>演示用户</strong>
+            <p>已登录 · 可继续完善角色与互动记录</p>
+          </div>
+        </div>
+
+        <div class="menu-panel">
+          <button class="menu-row" data-nav="membership">
+            <span class="menu-icon">✦</span> 会员中心
+            <span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-row" data-nav="create">
+            <span class="menu-icon">✎</span> 我的角色
+            <span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-row" data-nav="inbox">
+            <span class="menu-icon">◌</span> 互动记录
+            <span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-row" data-demo="设置入口已预留。">
+            <span class="menu-icon">⚙</span> 设置与反馈
+            <span class="menu-arrow">›</span>
+          </button>
+          <button class="menu-row logout-row" id="logout-btn">
+            <span class="menu-icon">↩</span> 退出登录
+            <span class="menu-arrow">›</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 聊天页 ═══════════════ -->
+    <section class="screen" data-view="chat-sheet" id="chat-screen">
+      <div class="chat-bg" id="chat-bg"></div>
+      <header class="chat-topbar">
+        <button class="top-icon light-icon" data-nav="home">‹</button>
+        <div class="chat-topbar-info">
+          <img class="chat-avatar-small" id="chat-avatar-small" src="" alt="" />
+          <div class="chat-title-col">
+            <div class="chat-title-name" id="chat-title-name">柳慕然</div>
+            <div class="chat-title-status">在线 · 陪伴中</div>
+          </div>
+        </div>
+        <button class="top-icon light-icon" data-demo="更多聊天功能已预留。">⋯</button>
+      </header>
+      <div class="chat-body">
+        <div class="messages" id="messages">
+          <div class="welcome-bubble" id="welcome">
+            <div class="welcome-name" id="chat-welcome-name">柳慕然</div>
+            <p id="chat-welcome-copy">你发过来的每一句话，我都会认真接住。</p>
+          </div>
+        </div>
+      </div>
+      <div class="chat-composer">
+        <textarea id="chat-input" rows="1" placeholder="给 TA 发一条消息…"></textarea>
+        <button id="send-btn">发送</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 底部导航 ═══════════════ -->
+    <nav id="bottom-tabbar">
+      <button class="tab-btn active" data-nav="home">
+        <span class="tab-icon">⌂</span>
+        <small>主页</small>
+      </button>
+      <button class="tab-btn" data-nav="discover">
+        <span class="tab-icon">◉</span>
+        <small>发现</small>
+      </button>
+      <button class="tab-btn center-tab" data-nav="create">
+        <span class="tab-icon">＋</span>
+      </button>
+      <button class="tab-btn" data-nav="inbox">
+        <span class="tab-icon">◌</span>
+        <small>互动</small>
+      </button>
+      <button class="tab-btn" data-nav="profile">
+        <span class="tab-icon">☻</span>
+        <small>我的</small>
+      </button>
+    </nav>
+
+    <div id="toast"></div>
+  </div>
+
+  <script src="/static-v3/app.js"></script>
+</body>
+</html>

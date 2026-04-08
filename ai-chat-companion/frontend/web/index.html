@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="description" content="中文优先的 AI 陪伴式聊天应用" />
+  <link rel="manifest" href="/static/manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AI 陪聊" />
+  <title>AI 陪聊</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="app-shell">
+    <div id="install-banner">
+      <span>📱 安装到桌面，像 App 一样随时陪你聊</span>
+      <button id="install-btn">安装</button>
+    </div>
+
+    <header id="global-topbar">
+      <div class="topbar-left">
+        <button class="icon-btn hidden" id="back-btn" aria-label="返回">←</button>
+        <button class="brand-area" data-nav="welcome" aria-label="返回首页">
+          <div class="brand-avatar">☾</div>
+          <div>
+            <div class="brand-name">小聊</div>
+            <div class="brand-subtitle" id="topbar-subtitle">有人听你说，也有人陪你慢慢聊</div>
+          </div>
+        </button>
+      </div>
+      <div class="topbar-actions" id="topbar-auth-actions">
+        <button class="ghost-btn" id="top-login-btn">登录</button>
+        <button class="solid-btn" id="top-register-btn">注册</button>
+      </div>
+    </header>
+
+    <main id="view-stack">
+      <section class="view active" data-view="welcome">
+        <div class="hero-card hero-main">
+          <div class="hero-badge">陪伴产品首页</div>
+          <h1>不只是 AI 对话框，而是一个更完整的陪伴产品</h1>
+          <p>
+            从今天的状态开始，选一个更适合你的陪伴对象，把聊天、打卡、发现与个人空间串成完整闭环。
+          </p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-nav="chat">立即开始聊天</button>
+            <button class="secondary-btn" data-nav="discover">挑选陪伴对象</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-card">
+              <strong>2 位</strong>
+              <span>可切换陪伴对象</span>
+            </div>
+            <div class="stat-card">
+              <strong>4 条</strong>
+              <span>核心体验路径</span>
+            </div>
+            <div class="stat-card">
+              <strong>本地保存</strong>
+              <span>心情记录持续可见</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="daily-brief-card">
+          <div class="daily-brief-top">
+            <div>
+              <div class="section-eyebrow">今日陪伴摘要</div>
+              <div class="daily-brief-title">今天可以从这里重新开始</div>
+            </div>
+            <button class="mini-btn" data-nav="profile">查看我的空间</button>
+          </div>
+          <div class="daily-brief-grid">
+            <div class="brief-item">
+              <span class="brief-label">当前陪伴对象</span>
+              <strong id="home-current-persona">林舒</strong>
+            </div>
+            <div class="brief-item">
+              <span class="brief-label">最近心情</span>
+              <strong id="home-latest-mood">还没记录</strong>
+            </div>
+            <div class="brief-item">
+              <span class="brief-label">本周陪伴</span>
+              <strong id="home-companion-days">3 天</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title-block compact">
+          <div class="section-eyebrow">今日推荐</div>
+          <h2>先选一个今天更想靠近的陪伴对象</h2>
+          <p>切换对象后，聊天页头像、头部信息和推荐开场语都会一起变化。</p>
+        </div>
+
+        <div class="persona-grid" id="welcome-persona-grid">
+          <button class="persona-card" data-persona="luna">
+            <div class="persona-avatar female">👩</div>
+            <div class="persona-copy">
+              <div class="persona-name-row">
+                <strong>林舒</strong>
+                <span class="persona-tag">温柔倾听</span>
+              </div>
+              <p>更擅长安慰、接住情绪，适合疲惫、难过或需要慢慢说的时候。</p>
+            </div>
+          </button>
+          <button class="persona-card" data-persona="zhou">
+            <div class="persona-avatar male">👨</div>
+            <div class="persona-copy">
+              <div class="persona-name-row">
+                <strong>周言</strong>
+                <span class="persona-tag">稳定陪伴</span>
+              </div>
+              <p>更偏冷静整理与打气陪伴，适合迷茫、焦虑或想理清思路的时候。</p>
+            </div>
+          </button>
+        </div>
+
+        <div class="feature-grid home-feature-grid">
+          <button class="feature-card" data-nav="chat">
+            <div class="feature-icon chat">💬</div>
+            <div class="feature-title">继续聊天</div>
+            <div class="feature-desc">进入更像真人对话的聊天页，直接开始交流。</div>
+          </button>
+          <button class="feature-card" data-nav="mood">
+            <div class="feature-icon mood">🙂</div>
+            <div class="feature-title">记录心情</div>
+            <div class="feature-desc">先保存今天的状态，再带着当下情绪去聊。</div>
+          </button>
+          <button class="feature-card" data-nav="profile">
+            <div class="feature-icon profile">☻</div>
+            <div class="feature-title">个人空间</div>
+            <div class="feature-desc">查看陪伴天数、偏好入口和演示账号状态。</div>
+          </button>
+        </div>
+      </section>
+
+      <section class="view" data-view="chat">
+        <div class="chat-header-card">
+          <div class="ai-avatar large" id="chat-persona-avatar">👩</div>
+          <div class="ai-meta">
+            <div class="ai-meta-name-row">
+              <div class="ai-meta-name" id="chat-persona-name">林舒</div>
+              <span class="pill-tag" id="chat-persona-badge">温柔倾听</span>
+            </div>
+            <div class="ai-meta-status">
+              <span class="status-dot"></span>
+              <span id="chat-persona-tagline">会先接住你的情绪，再慢慢陪你聊下去</span>
+            </div>
+          </div>
+          <button class="mini-btn" data-nav="discover">切换对象</button>
+        </div>
+
+        <div class="quick-actions-row" id="chat-quick-actions"></div>
+
+        <div id="messages-panel">
+          <div id="messages">
+            <div id="welcome">
+              <div class="welcome-icon" id="chat-welcome-avatar">👩</div>
+              <h2>嗨，我是 <span id="chat-welcome-name">林舒</span></h2>
+              <p id="chat-welcome-copy">你可以从今天最想说的一件小事开始，我会认真听。</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="inputbar">
+          <textarea
+            id="chat-input"
+            rows="1"
+            placeholder="想聊点什么？"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          ></textarea>
+          <button id="send-btn" aria-label="发送">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <section class="view" data-view="discover">
+        <div class="section-title-block">
+          <div class="section-eyebrow">发现</div>
+          <h2>今天想用哪一种方式被陪伴？</h2>
+          <p>这里把陪伴对象、聊天模式和轻场景入口放在一起，形成更完整的产品分发页。</p>
+        </div>
+
+        <div class="discover-section">
+          <div class="section-subtitle">陪伴对象</div>
+          <div class="persona-grid compact" id="discover-persona-grid">
+            <button class="persona-card compact" data-persona="luna">
+              <div class="persona-avatar female">👩</div>
+              <div class="persona-copy">
+                <div class="persona-name-row">
+                  <strong>林舒</strong>
+                  <span class="persona-tag">更柔和</span>
+                </div>
+                <p>适合想被安慰、被倾听、被接住的时候。</p>
+              </div>
+            </button>
+            <button class="persona-card compact" data-persona="zhou">
+              <div class="persona-avatar male">👨</div>
+              <div class="persona-copy">
+                <div class="persona-name-row">
+                  <strong>周言</strong>
+                  <span class="persona-tag">更稳一点</span>
+                </div>
+                <p>适合想整理思路、被鼓励、被稳定支持的时候。</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="discover-section">
+          <div class="section-subtitle">推荐模式</div>
+          <div class="mode-list">
+            <button class="mode-card prompt-chip" data-prompt="我现在需要被温柔安慰一下。">
+              <div class="mode-emoji">☁</div>
+              <div>
+                <div class="mode-title">安慰模式</div>
+                <div class="mode-desc">少一点压力，多一点被接住的感觉。</div>
+              </div>
+            </button>
+            <button class="mode-card prompt-chip" data-prompt="我今天想要一点鼓励，帮我打打气。">
+              <div class="mode-emoji">⚡</div>
+              <div>
+                <div class="mode-title">打气模式</div>
+                <div class="mode-desc">给你一点能量感和继续往前的推动。</div>
+              </div>
+            </button>
+            <button class="mode-card prompt-chip" data-prompt="我现在有点乱，帮我整理下思路。">
+              <div class="mode-emoji">✎</div>
+              <div>
+                <div class="mode-title">整理思路</div>
+                <div class="mode-desc">把混乱的感受慢慢拆开，理出重点。</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="discover-section">
+          <div class="section-subtitle">轻场景入口</div>
+          <div class="scene-grid">
+            <button class="scene-card prompt-chip" data-prompt="今晚有点睡不着，陪我说说话。">失眠夜晚</button>
+            <button class="scene-card prompt-chip" data-prompt="今天通勤很累，我想让自己缓一缓。">下班通勤</button>
+            <button class="scene-card prompt-chip" data-prompt="今天情绪有点低落，但我不太想被说教。">低落时刻</button>
+            <button class="scene-card prompt-chip" data-prompt="我今天做成了一件小事，想找人分享一下。">分享喜悦</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="mood">
+        <div class="section-title-block">
+          <div class="section-eyebrow">心情打卡</div>
+          <h2>先记录一下，今天的你是什么状态</h2>
+          <p>先选一个统一风格的情绪 sticker，再决定是保存下来，还是立刻带着这份情绪去聊天。</p>
+        </div>
+
+        <div class="mood-grid" id="mood-grid">
+          <button class="mood-card" data-mood="开心" data-emoji="🙂"><span>🙂</span><strong>开心</strong></button>
+          <button class="mood-card" data-mood="平静" data-emoji="😌"><span>😌</span><strong>平静</strong></button>
+          <button class="mood-card" data-mood="疲惫" data-emoji="😮"><span>😮</span><strong>疲惫</strong></button>
+          <button class="mood-card" data-mood="焦虑" data-emoji="😟"><span>😟</span><strong>焦虑</strong></button>
+          <button class="mood-card" data-mood="难过" data-emoji="😢"><span>😢</span><strong>难过</strong></button>
+          <button class="mood-card" data-mood="迷茫" data-emoji="😕"><span>😕</span><strong>迷茫</strong></button>
+        </div>
+
+        <div class="mood-journal-card">
+          <div class="journal-title">今天想补充一句什么？</div>
+          <textarea id="mood-note" class="journal-input" placeholder="比如：今天工作很累，但还是坚持下来了。"></textarea>
+          <div class="journal-actions">
+            <button class="secondary-btn" id="save-mood-btn">保存这次心情</button>
+            <button class="primary-btn" id="talk-about-mood-btn">带着这个心情去聊天</button>
+          </div>
+        </div>
+
+        <div class="record-card">
+          <div class="record-title">最近记录</div>
+          <div id="mood-records" class="record-list empty">还没有记录，先打一个今天的状态吧。</div>
+        </div>
+      </section>
+
+      <section class="view" data-view="profile">
+        <div class="profile-summary-card">
+          <div class="profile-main">
+            <div class="profile-avatar">你</div>
+            <div>
+              <div class="profile-name">演示用户</div>
+              <div class="profile-subtitle" id="profile-summary-subtitle">连续陪伴第 3 天 · 当前为演示版身份</div>
+            </div>
+          </div>
+          <button class="mini-btn" data-nav="login">账号管理</button>
+        </div>
+
+        <div class="profile-stats-grid">
+          <div class="stat-card profile-stat-card">
+            <strong id="profile-streak-days">3 天</strong>
+            <span>连续陪伴</span>
+          </div>
+          <div class="stat-card profile-stat-card">
+            <strong id="profile-persona-name">林舒</strong>
+            <span>当前对象</span>
+          </div>
+          <div class="stat-card profile-stat-card">
+            <strong id="profile-record-count">0 条</strong>
+            <span>心情记录</span>
+          </div>
+        </div>
+
+        <div class="profile-group">
+          <div class="section-subtitle">当前陪伴状态</div>
+          <div class="status-panel-card">
+            <div class="status-panel-main">
+              <div class="persona-avatar female" id="profile-persona-avatar">👩</div>
+              <div>
+                <div class="menu-title" id="profile-current-persona">林舒</div>
+                <div class="menu-desc" id="profile-current-tagline">会先接住你的情绪，再慢慢陪你聊下去</div>
+              </div>
+            </div>
+            <div class="status-panel-side">
+              <div class="status-pill">已就绪</div>
+              <div class="status-note" id="profile-latest-mood">最近心情：还没记录</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-group">
+          <div class="section-subtitle">常用功能</div>
+          <div class="profile-menu-list">
+            <button class="menu-card" data-nav="chat">
+              <div>
+                <div class="menu-title">继续聊天</div>
+                <div class="menu-desc">回到最近的聊天页，继续和当前对象对话。</div>
+              </div>
+              <span>›</span>
+            </button>
+            <button class="menu-card" data-nav="mood">
+              <div>
+                <div class="menu-title">心情记录</div>
+                <div class="menu-desc">查看并继续补充你的情绪打卡。</div>
+              </div>
+              <span>›</span>
+            </button>
+            <button class="menu-card" data-nav="discover">
+              <div>
+                <div class="menu-title">陪伴对象与模式</div>
+                <div class="menu-desc">切换男女角色，或从场景页进入新话题。</div>
+              </div>
+              <span>›</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="profile-group">
+          <div class="section-subtitle">账号与服务</div>
+          <div class="profile-menu-list">
+            <button class="menu-card" data-nav="login">
+              <div>
+                <div class="menu-title">登录与同步</div>
+                <div class="menu-desc">演示版入口，后续可接真实账号与聊天同步。</div>
+              </div>
+              <span>›</span>
+            </button>
+            <button class="menu-card" data-demo="通知与提醒功能将在后续版本开放。">
+              <div>
+                <div class="menu-title">通知与提醒</div>
+                <div class="menu-desc">后续可在这里管理回访提醒、陪伴通知等。</div>
+              </div>
+              <span>›</span>
+            </button>
+            <button class="menu-card" data-demo="隐私与反馈入口已预留，后续可继续补全。">
+              <div>
+                <div class="menu-title">隐私与反馈</div>
+                <div class="menu-desc">查看产品说明、反馈建议与隐私说明入口。</div>
+              </div>
+              <span>›</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view auth-view" data-view="login">
+        <div class="auth-card">
+          <div class="section-eyebrow">登录</div>
+          <h2>欢迎回来</h2>
+          <p>这一轮先保留产品化入口，后续再接真实账号系统与云端同步。</p>
+          <input class="auth-input" placeholder="手机号 / 邮箱" />
+          <input class="auth-input" placeholder="密码" type="password" />
+          <button class="primary-btn" id="login-submit-btn">登录（演示入口）</button>
+          <button class="text-btn" data-nav="register">还没有账号？去注册</button>
+        </div>
+      </section>
+
+      <section class="view auth-view" data-view="register">
+        <div class="auth-card">
+          <div class="section-eyebrow">注册</div>
+          <h2>创建你的陪伴空间</h2>
+          <p>先做产品原型闭环，后续再接真实注册、资料初始化与同步流程。</p>
+          <input class="auth-input" placeholder="昵称" />
+          <input class="auth-input" placeholder="手机号 / 邮箱" />
+          <input class="auth-input" placeholder="设置密码" type="password" />
+          <button class="primary-btn" id="register-submit-btn">注册（演示入口）</button>
+          <button class="text-btn" data-nav="login">已有账号？去登录</button>
+        </div>
+      </section>
+    </main>
+
+    <nav id="bottom-tabbar">
+      <button class="tab-btn active" data-nav="chat">
+        <span>💬</span>
+        <small>聊天</small>
+      </button>
+      <button class="tab-btn" data-nav="discover">
+        <span>✦</span>
+        <small>发现</small>
+      </button>
+      <button class="tab-btn" data-nav="mood">
+        <span>🙂</span>
+        <small>打卡</small>
+      </button>
+      <button class="tab-btn" data-nav="profile">
+        <span>☻</span>
+        <small>我的</small>
+      </button>
+    </nav>
+
+    <div id="toast" aria-live="polite"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
