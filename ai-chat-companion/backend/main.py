@@ -20,10 +20,24 @@ from backend.ai import (
     generate_reply,
     stream_reply,
 )
+from backend.auth import (
+    get_current_user_optional,
+    hash_password,
+    issue_token,
+    normalize_email,
+    verify_password,
+)
 from backend.config import settings
 from backend.db import Base, engine, get_db
-from backend.models import Message
-from backend.schemas import ChatRequest, ChatResponse
+from backend.models import Message, User
+from backend.schemas import (
+    AuthResponse,
+    ChatRequest,
+    ChatResponse,
+    LoginRequest,
+    RegisterRequest,
+    UserOut,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger("liaoka")
@@ -307,3 +321,92 @@ async def _global_handler(request: Request, exc: Exception):
         status_code=500,
         content={"error": "internal", "type": type(exc).__name__},
     )
+
+
+# ═══════════════════════════════════════════════════════════
+# Auth endpoints — 注册 / 登录 / 当前用户
+# ═══════════════════════════════════════════════════════════
+
+class EmailExistsError(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=409, detail={"code": "EMAIL_EXISTS", "message": "该邮箱已注册, 请直接登录"})
+
+
+@app.post("/auth/register", response_model=AuthResponse)
+def auth_register(payload: RegisterRequest, request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(_client_ip(request))
+    email = normalize_email(payload.email)
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="邮箱格式不正确")
+
+    if db.query(User).filter(User.email == email).first():
+        raise EmailExistsError()
+
+    user = User(
+        email=email,
+        password_hash=hash_password(payload.password),
+        nickname=(payload.nickname or email.split("@")[0])[:100],
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    token = issue_token(user.id)
+    return AuthResponse(token=token, user=UserOut.model_validate(user))
+
+
+@app.post("/auth/login", response_model=AuthResponse)
+def auth_login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(_client_ip(request))
+    email = normalize_email(payload.email)
+    user = db.query(User).filter(User.email == email).first()
+    if user is None or not user.password_hash or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="邮箱或密码错误")
+    user.last_active = datetime.now(timezone.utc)
+    db.commit()
+    token = issue_token(user.id)
+    return AuthResponse(token=token, user=UserOut.model_validate(user))
+
+
+@app.get("/auth/me", response_model=UserOut)
+def auth_me(user: User | None = Depends(get_current_user_optional)):
+    if user is None:
+        raise HTTPException(status_code=401, detail="未登录")
+    return UserOut.model_validate(user)
+
+
+# ═══════════════════════════════════════════════════════════
+# 图片上传 — 简易本地存储 (生产应用 S3/OSS)
+# ═══════════════════════════════════════════════════════════
+
+import secrets as _secrets
+from fastapi import File, UploadFile
+
+_UPLOAD_DIR = Path(__file__).parent.parent / "uploads"
+_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+_ALLOWED_IMG_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+_MAX_IMG_SIZE = 8 * 1024 * 1024  # 8MB
+
+if _UPLOAD_DIR.exists():
+    app.mount("/uploads", StaticFiles(directory=str(_UPLOAD_DIR)), name="uploads")
+
+
+@app.post("/upload/image")
+async def upload_image(
+    request: Request,
+    file: UploadFile = File(...),
+    user: User | None = Depends(get_current_user_optional),
+):
+    _check_rate_limit(_client_ip(request))
+    if file.content_type not in _ALLOWED_IMG_TYPES:
+        raise HTTPException(status_code=400, detail=f"不支持的图片格式: {file.content_type}")
+    contents = await file.read()
+    if len(contents) > _MAX_IMG_SIZE:
+        raise HTTPException(status_code=413, detail="图片超过 8MB 限制")
+
+    ext = file.content_type.split("/")[-1]
+    name = f"{_secrets.token_hex(12)}.{ext}"
+    target = _UPLOAD_DIR / name
+    target.write_bytes(contents)
+    url = f"/uploads/{name}"
+    logger.info("uploaded image %s by user_id=%s size=%d", name, user.id if user else None, len(contents))
+    return {"url": url, "size": len(contents)}

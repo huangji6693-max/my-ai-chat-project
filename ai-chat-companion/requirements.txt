@@ -3,8 +3,10 @@ uvicorn[standard]>=0.30,<1.0
 aiofiles>=23.0,<25.0
 streamlit>=1.44,<2.0
 sqlalchemy>=2.0,<3.0
+alembic>=1.13,<2.0
 anthropic>=0.52.0
 python-dotenv>=1.0,<2.0
+python-multipart>=0.0.9,<1.0
 requests>=2.32,<3.0
 
 # 测试依赖 (pytest 时使用, 生产可选)
