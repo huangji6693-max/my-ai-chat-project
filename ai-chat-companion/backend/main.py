@@ -136,7 +136,7 @@ def _serve_index(directory: Path):
 
 @app.get("/", include_in_schema=False)
 def root():
-    # 默认跳到最新 v4
+    # 默认 v4 — Hinge 风沉浸式重设计
     return _serve_index(_static_v4_dir if _static_v4_dir.exists() else _static_dir)
 
 

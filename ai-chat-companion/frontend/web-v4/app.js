@@ -245,10 +245,11 @@ function authHeaders() {
 }
 
 /**
- * 真注册/登录: 调用后端 /auth/register 或 /auth/login
- * 失败时降级到 demo 模式 (本地标记登录)
+ * 真注册/登录: 先尝试 login, 失败(401/400/409)则单次 fallback 到另一个方法
+ * 单次 fallback (有 _retried 保护), 避免死循环
+ * 最终失败返回 ok:false + 消息 (不降级到 demo, 让用户看到真实错误)
  */
-async function callAuth(method, identifier, secret) {
+async function callAuth(method, identifier, secret, _retried = false) {
   const endpoint = method === "register" ? "/auth/register" : "/auth/login";
   try {
     const res = await fetch(endpoint, {
@@ -261,24 +262,24 @@ async function callAuth(method, identifier, secret) {
       setAuthToken(data.token, data.user);
       return { ok: true };
     }
-    if (res.status === 409) {
-      // 邮箱已注册 → 自动改为登录
-      return await callAuth("login", identifier, secret);
+    // 邮箱已注册: 切到 login (单次)
+    if (res.status === 409 && method === "register" && !_retried) {
+      return await callAuth("login", identifier, secret, true);
     }
-    if (res.status === 401) {
-      // 密码错误, 不切换
-      const err = await res.json().catch(() => ({}));
-      return { ok: false, message: err.detail || "邮箱或密码错误" };
+    // 登录失败, 可能是新用户: 切到 register (单次)
+    if ((res.status === 401 || res.status === 400) && method === "login" && !_retried) {
+      return await callAuth("register", identifier, secret, true);
     }
-    if (res.status === 400 && method === "login") {
-      // 用户不存在 → 注册一个
-      return await callAuth("register", identifier, secret);
-    }
+    // 已 retried 或 其他错误: 返回真实错误
+    const err = await res.json().catch(() => ({}));
+    let msg = err.detail || "登录失败, 请检查邮箱/密码";
+    if (res.status === 401) msg = "邮箱或密码错误";
+    if (res.status === 409) msg = "该邮箱已注册, 密码不正确";
+    if (res.status === 429) msg = "请求过于频繁, 请稍后再试";
+    return { ok: false, message: msg };
   } catch (e) {
-    // 网络/服务器错误, 降级 demo
+    return { ok: false, message: "网络连接失败, 请稍后再试" };
   }
-  // demo fallback
-  return { ok: true, demo: true };
 }
 
 function isLoggedIn() {
@@ -375,8 +376,13 @@ function resetViewStateForLogout() {
 function applyBottomBarVisibility(viewName) {
   const tabbar = document.getElementById("bottom-tabbar");
   if (!tabbar) return;
-  const hiddenViews = new Set(["auth", "phone-login", "membership", "chat-sheet"]);
-  tabbar.style.display = hiddenViews.has(viewName) ? "none" : "grid";
+  const hiddenViews = new Set(["auth", "phone-login", "chat-sheet"]);
+  // 清掉 inline display, 让 CSS (display: grid) 接管
+  if (hiddenViews.has(viewName)) {
+    tabbar.style.display = "none";
+  } else {
+    tabbar.style.display = "";
+  }
 }
 
 function showView(name) {
