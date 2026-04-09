@@ -914,7 +914,7 @@ function initLoginActions() {
 }
 
 function initHomeActions() {
-  voiceToggleBtn?.addEventListener("click", () => showToast("语音能力已预留，稍后接入。"));
+  voiceToggleBtn?.addEventListener("click", () => showToast("语音能力已预留, 稍后接入"));
   voiceChatBtn?.addEventListener("click", () => {
     guardedEnter("chat-sheet");
     window.setTimeout(() => chatInputEl?.focus(), 80);
@@ -929,8 +929,36 @@ function initHomeActions() {
   });
   homeFavBtn?.addEventListener("click", () => {
     const favorited = toggleFavorite(currentCharacterId);
-    showToast(favorited ? "已收藏到互动记录。" : "已取消收藏。");
+    showToast(favorited ? "已加入收藏" : "已取消收藏");
   });
+
+  // 滑动切换角色 (左右 swipe)
+  if (homeHeroStageEl) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchActive = false;
+    homeHeroStageEl.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchActive = true;
+    }, { passive: true });
+    homeHeroStageEl.addEventListener("touchend", (e) => {
+      if (!touchActive) return;
+      touchActive = false;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        const ids = Object.keys(CHARACTERS);
+        const idx = ids.indexOf(currentCharacterId);
+        const next = dx < 0
+          ? ids[(idx + 1) % ids.length]
+          : ids[(idx - 1 + ids.length) % ids.length];
+        saveCharacterId(next);
+        renderCurrentCharacter();
+        showToast(`${dx < 0 ? "→" : "←"} ${CHARACTERS[next].name}`);
+      }
+    }, { passive: true });
+  }
 }
 
 function initCreateActions() {
