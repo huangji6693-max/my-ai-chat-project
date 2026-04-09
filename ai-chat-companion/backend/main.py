@@ -29,12 +29,18 @@ from backend.auth import (
 )
 from backend.config import settings
 from backend.db import Base, engine, get_db
-from backend.models import Message, User
+from backend.models import Character, Message, OtpCode, User
 from backend.schemas import (
     AuthResponse,
+    CharacterCreate,
+    CharacterOut,
+    CharacterUpdate,
     ChatRequest,
     ChatResponse,
     LoginRequest,
+    OtpSendRequest,
+    OtpSendResponse,
+    OtpVerifyRequest,
     RegisterRequest,
     UserOut,
 )
@@ -76,6 +82,9 @@ except (ValueError, IndexError):
 
 
 def _check_rate_limit(ip: str) -> None:
+    # 测试环境 bypass rate limit, 避免 pytest 自己把自己限了
+    if settings.environment.lower() == "test":
+        return
     now = time()
     window = _rate_window[ip]
     # 清掉 60 秒之前的记录
@@ -424,3 +433,198 @@ async def upload_image(
     url = f"/uploads/{name}"
     logger.info("uploaded image %s by user_id=%s size=%d", name, user.id if user else None, len(contents))
     return {"url": url, "size": len(contents)}
+
+
+# ═══════════════════════════════════════════════════════════
+# 手机号 OTP 登录 (mock — 开发模式返回 debug_code)
+# ═══════════════════════════════════════════════════════════
+
+import random as _rand
+
+
+def _gen_otp() -> str:
+    return "".join(str(_rand.randint(0, 9)) for _ in range(6))
+
+
+@app.post("/auth/otp/send", response_model=OtpSendResponse)
+def otp_send(payload: OtpSendRequest, request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(_client_ip(request))
+    phone = payload.phone.strip()
+    if not phone or len(phone) < 4:
+        raise HTTPException(status_code=400, detail="手机号格式不正确")
+
+    code = _gen_otp()
+    # 废弃旧 code
+    db.query(OtpCode).filter(OtpCode.phone == phone, OtpCode.used == False).update({"used": True})
+    db.add(OtpCode(phone=phone, code=code))
+    db.commit()
+    logger.info("otp sent to %s code=%s (dev mode)", phone, code)
+
+    # 开发/演示模式直接返回 code. 生产接短信网关, 不返回
+    return OtpSendResponse(
+        sent=True,
+        debug_code=code if not settings.is_production else None,
+    )
+
+
+@app.post("/auth/otp/verify", response_model=AuthResponse)
+def otp_verify(payload: OtpVerifyRequest, request: Request, db: Session = Depends(get_db)):
+    _check_rate_limit(_client_ip(request))
+    phone = payload.phone.strip()
+    code = payload.code.strip()
+
+    otp = (
+        db.query(OtpCode)
+        .filter(OtpCode.phone == phone, OtpCode.code == code, OtpCode.used == False)
+        .order_by(OtpCode.id.desc())
+        .first()
+    )
+    if otp is None:
+        # demo 模式: 万能码 123456 也通过, 方便主人演示
+        if not settings.is_production and code == "123456":
+            pass
+        else:
+            raise HTTPException(status_code=401, detail="验证码错误或已过期")
+    else:
+        otp.used = True
+        db.commit()
+
+    # 注册或登录
+    user = db.query(User).filter(User.phone == phone).first()
+    if user is None:
+        user = User(
+            phone=phone,
+            nickname=(payload.nickname or phone[-4:] or "用户")[:100],
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    user.last_active = datetime.now(timezone.utc)
+    db.commit()
+    token = issue_token(user.id)
+    return AuthResponse(token=token, user=UserOut.model_validate(user))
+
+
+# ═══════════════════════════════════════════════════════════
+# Characters — 自定义角色 CRUD + 公开市场
+# ═══════════════════════════════════════════════════════════
+
+from fastapi import Query
+
+
+@app.get("/characters/mine", response_model=list[CharacterOut])
+def characters_mine(
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    if user is None:
+        return []
+    rows = (
+        db.query(Character)
+        .filter(Character.owner_id == user.id)
+        .order_by(Character.updated_at.desc())
+        .all()
+    )
+    return [CharacterOut.model_validate(c) for c in rows]
+
+
+@app.get("/characters/market", response_model=list[CharacterOut])
+def characters_market(
+    db: Session = Depends(get_db),
+    sort: str = Query(default="plays", pattern="^(plays|recent|likes)$"),
+    limit: int = Query(default=50, ge=1, le=100),
+):
+    """公开角色市场"""
+    query = db.query(Character).filter(Character.is_public == True)
+    if sort == "recent":
+        query = query.order_by(Character.created_at.desc())
+    elif sort == "likes":
+        query = query.order_by(Character.likes_count.desc())
+    else:
+        query = query.order_by(Character.plays_count.desc())
+    rows = query.limit(limit).all()
+    return [CharacterOut.model_validate(c) for c in rows]
+
+
+@app.get("/characters/{cid}", response_model=CharacterOut)
+def character_get(cid: int, db: Session = Depends(get_db)):
+    c = db.query(Character).filter(Character.id == cid).first()
+    if c is None:
+        raise HTTPException(status_code=404, detail="角色不存在")
+    return CharacterOut.model_validate(c)
+
+
+@app.post("/characters", response_model=CharacterOut)
+def character_create(
+    payload: CharacterCreate,
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
+    _check_rate_limit(_client_ip(request))
+    c = Character(
+        owner_id=user.id if user else None,
+        name=payload.name.strip(),
+        tagline=payload.tagline.strip(),
+        style=payload.style.strip(),
+        description=payload.description,
+        system_prompt=payload.system_prompt,
+        opening_line=payload.opening_line,
+        avatar_url=payload.avatar_url,
+        cover_gradient=payload.cover_gradient,
+        tags=payload.tags,
+        is_public=payload.is_public,
+    )
+    db.add(c)
+    db.commit()
+    db.refresh(c)
+    return CharacterOut.model_validate(c)
+
+
+@app.patch("/characters/{cid}", response_model=CharacterOut)
+def character_update(
+    cid: int,
+    payload: CharacterUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_optional),
+):
+    c = db.query(Character).filter(Character.id == cid).first()
+    if c is None:
+        raise HTTPException(status_code=404, detail="角色不存在")
+    if user is None or c.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="无权修改他人角色")
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(c, field, value)
+    c.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(c)
+    return CharacterOut.model_validate(c)
+
+
+@app.delete("/characters/{cid}")
+def character_delete(
+    cid: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user_optional),
+):
+    c = db.query(Character).filter(Character.id == cid).first()
+    if c is None:
+        raise HTTPException(status_code=404, detail="角色不存在")
+    if user is None or c.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="无权删除他人角色")
+    db.delete(c)
+    db.commit()
+    return {"ok": True}
+
+
+@app.post("/characters/{cid}/play")
+def character_play(cid: int, db: Session = Depends(get_db)):
+    """记录一次使用 (前端进入聊天时调用)"""
+    c = db.query(Character).filter(Character.id == cid).first()
+    if c is None:
+        raise HTTPException(status_code=404, detail="角色不存在")
+    c.plays_count = (c.plays_count or 0) + 1
+    db.commit()
+    return {"plays": c.plays_count}
