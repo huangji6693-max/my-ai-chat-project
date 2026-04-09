@@ -460,6 +460,26 @@ function guardedEnter(viewName) {
   showView(viewName);
 }
 
+function renderCharacterSwitcher() {
+  const switcher = document.getElementById("character-switcher");
+  if (!switcher) return;
+  switcher.innerHTML = Object.values(CHARACTERS).map((c) => `
+    <button class="character-chip ${c.id === currentCharacterId ? "active" : ""}" data-character="${c.id}">
+      <img src="${c.avatar}" alt="${c.name}" />
+      <span>${c.name}</span>
+    </button>
+  `).join("");
+  switcher.querySelectorAll(".character-chip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cid = btn.dataset.character;
+      if (!cid || cid === currentCharacterId) return;
+      saveCharacterId(cid);
+      renderCurrentCharacter();
+      showToast(`已切换到 ${CHARACTERS[cid].name}`);
+    });
+  });
+}
+
 function renderCurrentCharacter() {
   const character = getCurrentCharacter();
 
@@ -487,6 +507,7 @@ function renderCurrentCharacter() {
   if (chatBgEl) chatBgEl.style.backgroundImage = `url("${character.cover}")`;
 
   updateFavoriteButton();
+  renderCharacterSwitcher();
 }
 
 function resetChatPanel() {
