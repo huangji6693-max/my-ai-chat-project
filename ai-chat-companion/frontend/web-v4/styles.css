@@ -1372,28 +1372,40 @@ input.discover-search {
 }
 
 .msg.typing,
+.typing-bubble,
 .typing-indicator {
-  display: flex;
-  gap: 4px;
-  padding: 14px 16px;
+  display: flex !important;
+  gap: 5px;
+  padding: 16px 20px !important;
+  align-items: center;
   align-self: flex-start;
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 20px !important;
+  border-bottom-left-radius: 6px !important;
+  min-height: 40px;
 }
 .msg.typing span,
+.typing-bubble span,
 .typing-indicator span {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.6);
-  animation: typing 1.2s ease-in-out infinite;
+  background: var(--pink-light);
+  animation: typing 1.4s var(--ease-out-expo) infinite;
 }
 .msg.typing span:nth-child(2),
-.typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.typing-bubble span:nth-child(2),
+.typing-indicator span:nth-child(2) { animation-delay: 0.18s; }
 .msg.typing span:nth-child(3),
-.typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+.typing-bubble span:nth-child(3),
+.typing-indicator span:nth-child(3) { animation-delay: 0.36s; }
 
 @keyframes typing {
-  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-3px); }
+  0%, 70%, 100% { opacity: 0.3; transform: translateY(0) scale(0.9); }
+  35% { opacity: 1; transform: translateY(-4px) scale(1); }
 }
 
 .chat-input-bar,
@@ -1451,8 +1463,24 @@ input.discover-search {
     0 10px 24px rgba(230, 62, 92, 0.55);
   flex-shrink: 0;
   border: none;
+  position: relative;
+  overflow: hidden;
 }
-#send-btn svg { transform: translateX(-1px); }
+#send-btn svg { transform: translateX(-1px); transition: opacity 0.2s; }
+#send-btn.sending svg { opacity: 0; }
+#send-btn.sending::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* ═══════════════ Toast ═══════════════ */
 #toast {

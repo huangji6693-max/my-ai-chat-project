@@ -584,7 +584,7 @@ async function sendMessage(prefilledText = null) {
   isSending = true;
   if (sendBtnEl) {
     sendBtnEl.disabled = true;
-    sendBtnEl.textContent = "…";
+    sendBtnEl.classList.add("sending");
   }
 
   // 显示用户消息 (含图片预览)
@@ -658,7 +658,7 @@ async function sendMessage(prefilledText = null) {
     isSending = false;
     if (sendBtnEl) {
       sendBtnEl.disabled = false;
-      sendBtnEl.textContent = "发送";
+      sendBtnEl.classList.remove("sending");
     }
   }
 }
