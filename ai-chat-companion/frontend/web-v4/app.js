@@ -1,5 +1,7 @@
 const SESSION_KEY = "chat_session_id_v4";
 const LOGIN_STATE_KEY = "v4_demo_login";
+const TOKEN_KEY = "v4_auth_token";
+const USER_KEY = "v4_auth_user";
 const AGREEMENT_KEY = "v4_demo_agreement";
 const CHARACTER_KEY = "v4_character_state";
 const FAVORITES_KEY = "v4_favorites";
@@ -215,8 +217,72 @@ function showToast(message) {
   }, 2200);
 }
 
+function getAuthToken() {
+  return localStorage.getItem(TOKEN_KEY) || "";
+}
+
+function setAuthToken(token, user) {
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  }
+}
+
+function getCurrentUser() {
+  try {
+    return JSON.parse(localStorage.getItem(USER_KEY) || "null");
+  } catch (e) {
+    return null;
+  }
+}
+
+function authHeaders() {
+  const t = getAuthToken();
+  return t ? { Authorization: `Bearer ${t}` } : {};
+}
+
+/**
+ * 真注册/登录: 调用后端 /auth/register 或 /auth/login
+ * 失败时降级到 demo 模式 (本地标记登录)
+ */
+async function callAuth(method, identifier, secret) {
+  const endpoint = method === "register" ? "/auth/register" : "/auth/login";
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: identifier, password: secret }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setAuthToken(data.token, data.user);
+      return { ok: true };
+    }
+    if (res.status === 409) {
+      // 邮箱已注册 → 自动改为登录
+      return await callAuth("login", identifier, secret);
+    }
+    if (res.status === 401) {
+      // 密码错误, 不切换
+      const err = await res.json().catch(() => ({}));
+      return { ok: false, message: err.detail || "邮箱或密码错误" };
+    }
+    if (res.status === 400 && method === "login") {
+      // 用户不存在 → 注册一个
+      return await callAuth("register", identifier, secret);
+    }
+  } catch (e) {
+    // 网络/服务器错误, 降级 demo
+  }
+  // demo fallback
+  return { ok: true, demo: true };
+}
+
 function isLoggedIn() {
-  return localStorage.getItem(LOGIN_STATE_KEY) === "1";
+  return localStorage.getItem(LOGIN_STATE_KEY) === "1" || !!getAuthToken();
 }
 
 function setLoggedIn(value) {
@@ -423,10 +489,37 @@ function autoResizeInput() {
   chatInputEl.style.height = `${Math.min(chatInputEl.scrollHeight, 120)}px`;
 }
 
+// 待发送的图片 url (从 /upload/image 拿到)
+let pendingImageUrl = null;
+
+async function uploadImageFile(file) {
+  if (!file) return null;
+  if (file.size > 8 * 1024 * 1024) {
+    showToast("图片不能超过 8MB");
+    return null;
+  }
+  const form = new FormData();
+  form.append("file", file);
+  try {
+    const res = await fetch("/upload/image", {
+      method: "POST",
+      headers: { ...authHeaders() },
+      body: form,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.url;
+  } catch (e) {
+    showToast(`图片上传失败: ${e.message}`);
+    return null;
+  }
+}
+
 async function sendMessage(prefilledText = null) {
   if (isSending) return;
   const text = (prefilledText ?? chatInputEl?.value ?? "").trim();
-  if (!text) return;
+  // 允许只发图片 (text 可以为空)
+  if (!text && !pendingImageUrl) return;
 
   isSending = true;
   if (sendBtnEl) {
@@ -434,7 +527,20 @@ async function sendMessage(prefilledText = null) {
     sendBtnEl.textContent = "…";
   }
 
-  appendMessage("user", text);
+  // 显示用户消息 (含图片预览)
+  const userBubble = appendMessage("user", text || "");
+  if (pendingImageUrl && userBubble) {
+    const img = document.createElement("img");
+    img.src = pendingImageUrl;
+    img.className = "message-image";
+    img.style.cssText = "max-width: 220px; border-radius: 14px; margin-top: 8px; display: block;";
+    userBubble.appendChild(img);
+  }
+  const sentImageUrl = pendingImageUrl;
+  pendingImageUrl = null;
+  const previewEl = document.getElementById("image-preview");
+  if (previewEl) previewEl.remove();
+
   if (chatInputEl) {
     chatInputEl.value = "";
     autoResizeInput();
@@ -445,11 +551,12 @@ async function sendMessage(prefilledText = null) {
     // v4: 优先用 /chat/stream 流式, 边生成边显示 (打字机效果)
     const res = await fetch("/chat/stream", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({
-        message: text,
+        message: text || "(图片)",
         session_id: getSessionId(),
         persona: getCurrentCharacter().persona,
+        image_url: sentImageUrl,
       }),
     });
 
@@ -685,7 +792,7 @@ function initLoginActions() {
     openLoginForm("phone");
   });
 
-  phoneLoginSubmit?.addEventListener("click", () => {
+  phoneLoginSubmit?.addEventListener("click", async () => {
     const config = LOGIN_METHOD_CONFIG[currentLoginMethod] || LOGIN_METHOD_CONFIG.email;
     const identifier = phoneNumberInput?.value.trim();
     const secret = phoneCodeInput?.value.trim();
@@ -699,6 +806,26 @@ function initLoginActions() {
       phoneCodeInput?.focus();
       return;
     }
+    // 邮箱方式真接通后端, 手机号/Apple 还是 demo
+    if (currentLoginMethod === "email" && identifier.includes("@")) {
+      phoneLoginSubmit.disabled = true;
+      phoneLoginSubmit.textContent = "登录中…";
+      const result = await callAuth("login", identifier, secret);
+      phoneLoginSubmit.disabled = false;
+      phoneLoginSubmit.textContent = config.submitText || "继续登录";
+      if (!result.ok) {
+        showToast(result.message || "登录失败, 请重试");
+        return;
+      }
+      setLoggedIn(true);
+      const user = getCurrentUser();
+      showToast(result.demo
+        ? config.successText
+        : `欢迎回来, ${user?.nickname || "朋友"}`);
+      guardedEnter("home");
+      return;
+    }
+    // 其他方式: 沿用 demo 模式
     setLoggedIn(true);
     showToast(config.successText);
     guardedEnter("home");
@@ -815,6 +942,28 @@ function initProfileActions() {
   });
 }
 
+function showImagePreview(file, url) {
+  // 移除已有的预览
+  const existing = document.getElementById("image-preview");
+  if (existing) existing.remove();
+
+  const preview = document.createElement("div");
+  preview.id = "image-preview";
+  preview.innerHTML = `
+    <img src="${url}" alt="预览" />
+    <div class="preview-info">
+      <strong>${file.name}</strong>
+      <span>${(file.size / 1024).toFixed(0)} KB · 准备发送</span>
+    </div>
+    <button class="preview-cancel" type="button">×</button>
+  `;
+  document.body.appendChild(preview);
+  preview.querySelector(".preview-cancel").addEventListener("click", () => {
+    pendingImageUrl = null;
+    preview.remove();
+  });
+}
+
 function initChatActions() {
   sendBtnEl?.addEventListener("click", () => sendMessage());
   chatInputEl?.addEventListener("input", autoResizeInput);
@@ -823,6 +972,24 @@ function initChatActions() {
       event.preventDefault();
       sendMessage();
     }
+  });
+
+  // 图片上传按钮
+  const imageBtn = document.getElementById("image-btn");
+  const imageInput = document.getElementById("image-input");
+  imageBtn?.addEventListener("click", () => imageInput?.click());
+  imageInput?.addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    showToast("正在上传图片…");
+    const url = await uploadImageFile(file);
+    if (url) {
+      pendingImageUrl = url;
+      showImagePreview(file, url);
+      showToast("图片已就绪, 点发送");
+    }
+    // 清空 input 让同一张图也能再上传
+    imageInput.value = "";
   });
 }
 

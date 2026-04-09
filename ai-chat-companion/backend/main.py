@@ -180,11 +180,16 @@ def health():
 # ═══════════════════════════════════════════════════════════
 
 @app.post("/chat", response_model=ChatResponse)
-def chat(payload: ChatRequest, request: Request, db: Session = Depends(get_db)):
+def chat(
+    payload: ChatRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
     _check_rate_limit(_client_ip(request))
 
     user_message = payload.message.strip()
-    if not user_message:
+    if not user_message and not payload.image_url:
         raise HTTPException(status_code=400, detail="消息不能为空")
 
     history_records = (
@@ -196,8 +201,10 @@ def chat(payload: ChatRequest, request: Request, db: Session = Depends(get_db)):
 
     user_record = Message(
         session_id=payload.session_id,
+        user_id=user.id if user else None,
         role="user",
-        content=user_message,
+        content=user_message or "(图片)",
+        image_url=payload.image_url,
     )
     db.add(user_record)
     db.commit()
@@ -233,7 +240,12 @@ def chat(payload: ChatRequest, request: Request, db: Session = Depends(get_db)):
 # ═══════════════════════════════════════════════════════════
 
 @app.post("/chat/stream")
-def chat_stream(payload: ChatRequest, request: Request, db: Session = Depends(get_db)):
+def chat_stream(
+    payload: ChatRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_current_user_optional),
+):
     """流式 chat — 边生成边返回. 前端用 fetch ReadableStream 或 EventSource 消费.
 
     响应格式: plain text chunks (每次 yield 一段文本片段)
@@ -242,7 +254,7 @@ def chat_stream(payload: ChatRequest, request: Request, db: Session = Depends(ge
     _check_rate_limit(_client_ip(request))
 
     user_message = payload.message.strip()
-    if not user_message:
+    if not user_message and not payload.image_url:
         raise HTTPException(status_code=400, detail="消息不能为空")
 
     # 存用户消息
@@ -254,8 +266,10 @@ def chat_stream(payload: ChatRequest, request: Request, db: Session = Depends(ge
     )
     user_record = Message(
         session_id=payload.session_id,
+        user_id=user.id if user else None,
         role="user",
-        content=user_message,
+        content=user_message or "(图片)",
+        image_url=payload.image_url,
     )
     db.add(user_record)
     db.commit()

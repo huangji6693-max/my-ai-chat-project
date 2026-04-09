@@ -1774,3 +1774,80 @@ input.discover-search {
   font-size: 26px;
   line-height: 1;
 }
+
+/* ═══════════════ 图片上传按钮 + 预览 ═══════════════ */
+.composer-icon-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 300;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.composer-icon-btn:hover {
+  background: rgba(230, 62, 92, 0.18);
+  border-color: var(--border-pink);
+  color: var(--pink-light);
+}
+.composer-icon-btn:active { transform: scale(0.92); }
+
+#image-preview {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 0) + 80px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100vw - 32px), calc(var(--shell-width) - 32px));
+  padding: 10px 14px;
+  background: rgba(15, 16, 18, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-pink);
+  border-radius: var(--r-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 50;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  animation: msg-in 0.25s ease-out;
+}
+#image-preview img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+#image-preview .preview-info {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+#image-preview .preview-info strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+#image-preview .preview-cancel {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(248, 113, 113, 0.18);
+  color: var(--red);
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.message-image {
+  margin-top: 8px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border-subtle);
+}

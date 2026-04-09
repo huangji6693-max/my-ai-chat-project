@@ -191,8 +191,35 @@ def build_fallback_reply(persona: str | None = None) -> str:
 # ═══════════════════════════════════════════════════════════
 
 def build_history(messages: Iterable) -> list[dict]:
-    """把 ORM messages 转成 Claude API 格式"""
-    return [{"role": m.role, "content": m.content} for m in messages]
+    """把 ORM messages 转成 Claude API 格式
+
+    支持 image_url 字段 — 如果消息带图片, 转成 Claude vision 的 multi-block content.
+    Claude API 接受 list[dict] 形式: [{"type":"image","source":...},{"type":"text","text":...}]
+    """
+    history = []
+    for m in messages:
+        image_url = getattr(m, "image_url", None)
+        if image_url and m.role == "user":
+            # 把图片转成 Claude vision block (用 URL source, Claude API 0.40+ 支持)
+            content_blocks = [
+                {
+                    "type": "image",
+                    "source": {"type": "url", "url": image_url} if image_url.startswith("http")
+                              else {"type": "base64", "media_type": "image/jpeg", "data": ""},
+                },
+                {"type": "text", "text": m.content or "(图片)"},
+            ]
+            # 本地 /uploads/ 路径不能直接传给 Claude, 退化为 text-only 提示
+            if not image_url.startswith("http"):
+                history.append({
+                    "role": m.role,
+                    "content": f"[用户发送了一张图片] {m.content or ''}".strip(),
+                })
+            else:
+                history.append({"role": m.role, "content": content_blocks})
+        else:
+            history.append({"role": m.role, "content": m.content})
+    return history
 
 
 def trim_history(history: list[dict], max_messages: int = 30) -> list[dict]:

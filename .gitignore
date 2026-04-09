@@ -5,3 +5,4 @@ __pycache__/
 ai-chat-companion/.env
 ai-chat-companion/chat.db
 ai-chat-companion/venv/
+ai-chat-companion/uploads/
