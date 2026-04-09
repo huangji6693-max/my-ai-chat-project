@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.env
+ai-chat-companion/.env
+ai-chat-companion/chat.db
+ai-chat-companion/venv/

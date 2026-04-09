@@ -33,6 +33,7 @@ _static_dir = _frontend_root / "web"
 _static_v1_dir = _frontend_root / "web-v1"
 _static_v2_dir = _frontend_root / "web-v2"
 _static_v3_dir = _frontend_root / "web-v3"
+_static_v4_dir = _frontend_root / "web-v4"
 
 if _static_dir.exists():
     app.mount("/static", StaticFiles(directory=str(_static_dir)), name="static")
@@ -42,6 +43,8 @@ if _static_v2_dir.exists():
     app.mount("/static-v2", StaticFiles(directory=str(_static_v2_dir)), name="static-v2")
 if _static_v3_dir.exists():
     app.mount("/static-v3", StaticFiles(directory=str(_static_v3_dir)), name="static-v3")
+if _static_v4_dir.exists():
+    app.mount("/static-v4", StaticFiles(directory=str(_static_v4_dir)), name="static-v4")
 
 
 def serve_frontend_index(directory: Path):
@@ -76,6 +79,13 @@ def serve_v2_index():
 def serve_v3_index():
     """返回猫箱风格重构的第三版 PWA 页面"""
     return serve_frontend_index(_static_v3_dir)
+
+
+@app.get("/v4", include_in_schema=False)
+@app.get("/v4/", include_in_schema=False)
+def serve_v4_index():
+    """返回 Hinge 风格沉浸式 + mesh 流动的第四版 PWA 页面"""
+    return serve_frontend_index(_static_v4_dir)
 
 
 @app.get("/health")
@@ -114,13 +124,9 @@ def chat(payload: ChatRequest, db: Session = Depends(get_db)):
 
     try:
         reply = generate_reply(history, payload.persona)
-    except AIReplyError as exc:
-        if exc.code == "missing_api_key":
-            reply = "现在还没有接入聊天引擎，请先在 .env 里配置 ANTHROPIC_API_KEY。"
-        elif exc.code == "engine_request_failed":
-            reply = "聊天引擎刚刚连接失败了，你可以再发我一句，我马上重试。"
-        else:
-            reply = build_fallback_reply(payload.persona)
+    except AIReplyError:
+        # 演示模式 — 任何 AI 引擎错误都用 persona-aware fallback, 用户体验流畅
+        reply = build_fallback_reply(payload.persona)
     except Exception:
         reply = build_fallback_reply(payload.persona)
 

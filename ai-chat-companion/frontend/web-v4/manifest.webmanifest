@@ -1,0 +1,25 @@
+{
+  "name": "撩咖",
+  "short_name": "撩咖",
+  "description": "中文优先的 AI 陪聊应用 · 撩咖 V3",
+  "start_url": "/v3",
+  "display": "standalone",
+  "background_color": "#f6f6f3",
+  "theme_color": "#111111",
+  "orientation": "portrait-primary",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/static-v3/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static-v3/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
