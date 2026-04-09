@@ -24,26 +24,26 @@
       </div>
       <div class="auth-content">
         <div class="auth-brand">
-          <div class="auth-logo">🐈</div>
+          <div class="auth-logo" aria-label="撩咖"></div>
           <div class="auth-brand-name">撩咖</div>
-          <div class="auth-brand-sub">你的专属 AI 伙伴</div>
+          <div class="auth-brand-sub">LIAOKA · YOUR COMPANION</div>
         </div>
 
         <div class="auth-card">
           <div class="auth-actions">
             <button class="login-btn btn-primary" id="email-login-btn">
-              <span class="btn-icon">✉</span> 邮箱登录
+              使用邮箱继续
             </button>
             <button class="login-btn btn-secondary" id="phone-entry-btn">
-              <span class="btn-icon">📱</span> 手机号登录
+              使用手机号继续
             </button>
-            <button class="login-btn btn-secondary" id="apple-login-btn">
-              <span class="btn-icon"></span> Apple 登录
+            <button class="login-btn btn-ghost" id="apple-login-btn">
+              使用 Apple ID
             </button>
           </div>
           <label class="agreement-row">
             <input type="checkbox" id="agreement-checkbox" />
-            <span>已阅读并同意<a href="#" class="link-text">《服务协议》</a>和<a href="#" class="link-text">《隐私政策》</a></span>
+            <span>我已阅读并同意<a href="#" class="link-text">《服务协议》</a>与<a href="#" class="link-text">《隐私政策》</a></span>
           </label>
           <button class="feedback-btn" data-demo="意见与反馈入口已预留。">意见与反馈</button>
         </div>
@@ -94,10 +94,17 @@
 
         <!-- 顶部栏 -->
         <header class="hero-topbar">
-          <button class="pill-btn" data-nav="membership">✦ 会员中心</button>
+          <button class="pill-btn" data-nav="membership">
+            <span class="pill-dot"></span>
+            会员中心
+          </button>
           <div class="hero-actions">
-            <button class="icon-circle" data-nav="discover" aria-label="发现">⌕</button>
-            <button class="icon-circle" id="voice-toggle-btn" aria-label="声音">🔊</button>
+            <button class="icon-circle" data-nav="discover" aria-label="发现">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            </button>
+            <button class="icon-circle" id="voice-toggle-btn" aria-label="声音">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+            </button>
           </div>
         </header>
 
@@ -111,12 +118,12 @@
             <strong id="home-character-name">柳慕然</strong>
             <button class="ghost-pill" data-nav="create">配置角色</button>
           </div>
-          <p id="home-character-description">白发、冷白皮、夜景公寓氛围，设定偏温柔强势，会认真接住情绪，也会主动推进对话。</p>
+          <p id="home-character-description">白发、冷白皮、夜景公寓氛围, 设定偏温柔强势, 会认真接住情绪, 也会主动推进对话.</p>
         </div>
 
         <!-- 预览对话框 -->
         <div class="hero-dialog-card" id="home-preview-message">
-          晚上风有点大，你回来的时候记得慢一点。我在这，先听你说今天发生了什么。
+          晚上风有点大, 你回来的时候记得慢一点. 我在这, 先听你说今天发生了什么.
         </div>
 
         <!-- 角色信息行 -->
@@ -126,18 +133,33 @@
             <span id="home-character-tag">陪伴中</span>
           </div>
           <div class="hero-stats">
-            <button class="stat-btn" id="home-fav-btn" title="收藏">♡</button>
-            <button class="stat-btn" data-demo="分享入口已预留。" title="分享">↗</button>
-            <button class="stat-btn" data-demo="评论入口已预留。" title="更多">…</button>
+            <button class="stat-btn" id="home-fav-btn" aria-label="收藏">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+            </button>
+            <button class="stat-btn" data-demo="分享入口已预留。" aria-label="分享">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </button>
+            <button class="stat-btn" data-demo="评论入口已预留。" aria-label="更多">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            </button>
           </div>
         </div>
 
         <!-- 底部操作栏 -->
         <div class="home-dock">
-          <button class="dock-icon-btn" data-demo="语音通话入口已预留。" title="语音">☎</button>
-          <button class="dock-main-btn" id="voice-chat-btn">按住说话</button>
-          <button class="dock-icon-btn" id="keyboard-toggle-btn" title="文字">⌨</button>
-          <button class="dock-icon-btn accent" id="quick-send-btn" title="发消息">＋</button>
+          <button class="dock-icon-btn" data-demo="语音通话入口已预留。" aria-label="语音">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+          </button>
+          <button class="dock-main-btn" id="voice-chat-btn">
+            <span class="dock-main-dot"></span>
+            开始对话
+          </button>
+          <button class="dock-icon-btn" id="keyboard-toggle-btn" aria-label="文字">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="10"/><line x1="10" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="14" y2="10"/><line x1="18" y1="10" x2="18" y2="10"/><line x1="6" y1="14" x2="18" y2="14"/></svg>
+          </button>
+          <button class="dock-icon-btn accent" id="quick-send-btn" aria-label="发消息">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
         </div>
       </div>
     </section>
@@ -196,10 +218,25 @@
         </div>
 
         <div class="subtab-row">
-          <button class="subtab-btn">模板</button>
-          <button class="subtab-btn">捏形象</button>
-          <button class="subtab-btn active">角色</button>
-          <button class="subtab-btn">故事</button>
+          <button class="subtab-btn" data-subtab="template">模板</button>
+          <button class="subtab-btn" data-subtab="avatar">捏形象</button>
+          <button class="subtab-btn active" data-subtab="role">角色</button>
+          <button class="subtab-btn" data-subtab="story">故事</button>
+        </div>
+
+        <div class="subtab-panels">
+          <div class="subtab-panel active" data-panel="role">
+            <p class="panel-hint">上方已经选择了风格与标签, 点击保存即可生成属于你的专属角色.</p>
+          </div>
+          <div class="subtab-panel" data-panel="template" hidden>
+            <p class="panel-hint">选择一个模板作为起点, 我们会帮你补全人设与开场白.</p>
+          </div>
+          <div class="subtab-panel" data-panel="avatar" hidden>
+            <p class="panel-hint">头像生成模块即将接入 Midjourney / SDXL, 当前暂为文字头像.</p>
+          </div>
+          <div class="subtab-panel" data-panel="story" hidden>
+            <p class="panel-hint">为你的角色编写一段背景故事, AI 会基于故事调整对话风格.</p>
+          </div>
         </div>
 
         <button class="wide-btn btn-dark" id="save-character-btn">保存当前角色设定</button>
@@ -260,36 +297,11 @@
         <button class="top-icon" data-demo="筛选入口已预留。">☰</button>
       </header>
       <div class="segment-row" id="inbox-segments">
-        <button class="segment-btn active">聊过</button>
-        <button class="segment-btn">赞过</button>
-        <button class="segment-btn">消息</button>
+        <button class="segment-btn active" data-segment="chat">聊过</button>
+        <button class="segment-btn" data-segment="likes">赞过</button>
+        <button class="segment-btn" data-segment="notice">消息</button>
       </div>
-      <div class="list-panel" id="inbox-list">
-        <div class="list-item" data-character="liu">
-          <img class="list-avatar" src="https://api.dicebear.com/9.x/adventurer/svg?seed=LiuMuran&hair=long17&eyes=variant12&skinColor=f2d3b1" alt="柳慕然" />
-          <div class="list-info">
-            <strong>柳慕然</strong>
-            <p>昨晚 23:10 · 继续聊"今天很累"那条对话</p>
-          </div>
-          <span class="list-arrow">›</span>
-        </div>
-        <div class="list-item" data-character="jiang">
-          <img class="list-avatar" src="https://api.dicebear.com/9.x/adventurer/svg?seed=JiangCe&hair=short11&eyes=variant08&skinColor=d5b99e" alt="江策" />
-          <div class="list-info">
-            <strong>江策</strong>
-            <p>今天 09:26 · 你收藏了他的陪伴卡片</p>
-          </div>
-          <span class="list-arrow">›</span>
-        </div>
-        <div class="list-item" data-character="sys">
-          <div class="list-avatar sys-avatar">📢</div>
-          <div class="list-info">
-            <strong>系统通知</strong>
-            <p>你保存了一份新的角色设定，可在"我的角色"中查看</p>
-          </div>
-          <span class="list-arrow">›</span>
-        </div>
-      </div>
+      <div class="list-panel" id="inbox-list"></div>
     </section>
 
     <!-- ═══════════════ 我的 ═══════════════ -->
@@ -365,22 +377,32 @@
     <!-- ═══════════════ 底部导航 ═══════════════ -->
     <nav id="bottom-tabbar">
       <button class="tab-btn active" data-nav="home">
-        <span class="tab-icon">⌂</span>
+        <span class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2h-4a1 1 0 0 1-1-1v-6h-4v6a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2Z"/></svg>
+        </span>
         <small>主页</small>
       </button>
       <button class="tab-btn" data-nav="discover">
-        <span class="tab-icon">◉</span>
+        <span class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
         <small>发现</small>
       </button>
       <button class="tab-btn center-tab" data-nav="create">
-        <span class="tab-icon">＋</span>
+        <span class="tab-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </span>
       </button>
       <button class="tab-btn" data-nav="inbox">
-        <span class="tab-icon">◌</span>
+        <span class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.5a8.38 8.38 0 0 1-9 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1 15.1-6.1A8.38 8.38 0 0 1 22 11.5Z"/></svg>
+        </span>
         <small>互动</small>
       </button>
       <button class="tab-btn" data-nav="profile">
-        <span class="tab-icon">☻</span>
+        <span class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </span>
         <small>我的</small>
       </button>
     </nav>

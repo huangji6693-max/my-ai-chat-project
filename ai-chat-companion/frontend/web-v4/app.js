@@ -8,6 +8,56 @@ const FAVORITES_KEY = "v4_favorites";
 const SAVED_CHARACTER_DRAFT_KEY = "v4_saved_character_draft";
 const SELECTED_PLAN_KEY = "v4_selected_plan";
 
+/**
+ * 生成极简艺术风角色封面 SVG (Linear/Spotify 风格, 无低端卡通头像)
+ * 渐变背景 + 超大汉字 + 极细装饰线 + 品牌水印
+ */
+function makePortrait(ch1, ch2, c1, c2, accent) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 900' preserveAspectRatio='xMidYMid slice'>
+<defs>
+<linearGradient id='g' x1='0.2' y1='0' x2='0.8' y2='1'>
+<stop offset='0' stop-color='${c1}'/>
+<stop offset='0.55' stop-color='${c2}'/>
+<stop offset='1' stop-color='#05060a'/>
+</linearGradient>
+<radialGradient id='r' cx='0.5' cy='0.28' r='0.65'>
+<stop offset='0' stop-color='${accent}' stop-opacity='0.55'/>
+<stop offset='0.5' stop-color='${accent}' stop-opacity='0.14'/>
+<stop offset='1' stop-color='${accent}' stop-opacity='0'/>
+</radialGradient>
+<linearGradient id='v' x1='0.5' y1='0.4' x2='0.5' y2='1'>
+<stop offset='0' stop-color='#05060a' stop-opacity='0'/>
+<stop offset='1' stop-color='#05060a' stop-opacity='0.92'/>
+</linearGradient>
+</defs>
+<rect width='600' height='900' fill='url(#g)'/>
+<rect width='600' height='900' fill='url(#r)'/>
+<g opacity='0.06' stroke='#ffffff' stroke-width='1' fill='none'>
+<circle cx='300' cy='380' r='180'/>
+<circle cx='300' cy='380' r='260'/>
+<circle cx='300' cy='380' r='340'/>
+</g>
+<text x='220' y='470' font-family='PingFang SC, -apple-system, Noto Sans CJK SC, sans-serif' font-size='360' font-weight='900' fill='#ffffff' opacity='0.93' text-anchor='middle' letter-spacing='-18'>${ch1}</text>
+<text x='380' y='580' font-family='PingFang SC, -apple-system, Noto Sans CJK SC, sans-serif' font-size='160' font-weight='300' fill='#ffffff' opacity='0.3' text-anchor='middle' letter-spacing='-8'>${ch2}</text>
+<rect width='600' height='900' fill='url(#v)'/>
+<line x1='60' y1='810' x2='100' y2='810' stroke='${accent}' stroke-width='2'/>
+<text x='110' y='816' font-family='SF Pro, Inter, sans-serif' font-size='18' font-weight='600' fill='#ffffff' opacity='0.5' letter-spacing='5'>LIAOKA</text>
+</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+/**
+ * 小头像 SVG (聊天气泡 + 列表用) — 圆形字符
+ */
+function makeMiniPortrait(ch, c1, c2) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'>
+<defs><linearGradient id='mg' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='${c1}'/><stop offset='1' stop-color='${c2}'/></linearGradient></defs>
+<rect width='120' height='120' rx='60' fill='url(#mg)'/>
+<text x='60' y='82' font-family='PingFang SC, sans-serif' font-size='62' font-weight='700' fill='#ffffff' text-anchor='middle' opacity='0.95'>${ch}</text>
+</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
 const CHARACTERS = {
   liu: {
     id: "liu",
@@ -18,8 +68,8 @@ const CHARACTERS = {
     preview: "晚上风有点大，你回来的时候记得慢一点。我在这，先听你说今天发生了什么。",
     persona: "luna",
     plays: "558.9万",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=LiuMuran&hair=long17&eyes=variant12&skinColor=f2d3b1",
-    cover: "linear-gradient(180deg, rgba(72, 82, 128, 0.22), rgba(8, 10, 16, 0.72)), radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 36%)",
+    cover: makePortrait("柳", "慕然", "#3a1828", "#1a0812", "#ff6b88"),
+    avatar: makeMiniPortrait("柳", "#e63e5c", "#7a1830"),
   },
   jiang: {
     id: "jiang",
@@ -30,8 +80,8 @@ const CHARACTERS = {
     preview: "你可以先不用把情绪整理好，直接发给我。我会帮你一点点理顺。",
     persona: "zhou",
     plays: "155.7万",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=JiangCe&hair=short11&eyes=variant08&skinColor=d5b99e",
-    cover: "linear-gradient(180deg, rgba(80, 58, 66, 0.24), rgba(10, 10, 14, 0.76)), radial-gradient(circle at top, rgba(255,255,255,0.16), transparent 38%)",
+    cover: makePortrait("江", "策", "#1a2a3e", "#060e1c", "#7ea3d6"),
+    avatar: makeMiniPortrait("江", "#4a6f9e", "#0e1a2e"),
   },
   gu: {
     id: "gu",
@@ -42,8 +92,8 @@ const CHARACTERS = {
     preview: "你先说，我负责把今天那些乱七八糟的心情拆开，顺便逗你笑一下。",
     persona: "zhou",
     plays: "596.5万",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=GuChenzhou&hair=short04&eyes=variant02&skinColor=e0c4a8",
-    cover: "linear-gradient(180deg, rgba(44, 86, 104, 0.24), rgba(8, 12, 16, 0.76)), radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 38%)",
+    cover: makePortrait("顾", "沉舟", "#0e2e2a", "#04120f", "#5fd6c0"),
+    avatar: makeMiniPortrait("顾", "#2d9b8f", "#0a1f1c"),
   },
   su: {
     id: "su",
@@ -54,8 +104,8 @@ const CHARACTERS = {
     preview: "今天是不是又一个人扛了很多？你先靠过来一点，我不催你慢慢说。",
     persona: "luna",
     plays: "13.6万",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=SuTang&hair=long05&eyes=variant04&skinColor=f2d3b1&features=blush",
-    cover: "linear-gradient(180deg, rgba(116, 72, 100, 0.26), rgba(10, 8, 16, 0.78)), radial-gradient(circle at top, rgba(255,255,255,0.20), transparent 38%)",
+    cover: makePortrait("苏", "棠", "#3a0e22", "#1a050e", "#ff7da6"),
+    avatar: makeMiniPortrait("苏", "#c8416d", "#5c1030"),
   },
 };
 
@@ -350,7 +400,7 @@ function toggleFavorite(characterId) {
 
 function updateFavoriteButton() {
   if (!homeFavBtn) return;
-  homeFavBtn.textContent = isFavorite(currentCharacterId) ? "♥" : "♡";
+  homeFavBtn.classList.toggle("favorited", isFavorite(currentCharacterId));
 }
 
 function saveCharacterId(characterId, options = {}) {
@@ -419,9 +469,12 @@ function renderCurrentCharacter() {
   if (homePreviewMessageEl) homePreviewMessageEl.textContent = character.preview;
   if (homeCharacterSubnameEl) homeCharacterSubnameEl.textContent = character.name;
   if (homeCharacterTagEl) homeCharacterTagEl.textContent = character.tagline;
-  if (homeAvatarImgEl) homeAvatarImgEl.src = character.avatar;
-  if (homeAvatarImgEl) homeAvatarImgEl.alt = character.name;
-  if (homeHeroStageEl) homeHeroStageEl.style.background = character.cover;
+  // hero avatar img uses the full-bleed cover (massive portrait SVG)
+  if (homeAvatarImgEl) {
+    homeAvatarImgEl.src = character.cover;
+    homeAvatarImgEl.alt = character.name;
+  }
+  if (homeHeroStageEl) homeHeroStageEl.style.background = "";
 
   if (welcomeNameEl) welcomeNameEl.textContent = character.name;
   if (welcomeCopyEl) welcomeCopyEl.textContent = character.preview;
@@ -430,7 +483,8 @@ function renderCurrentCharacter() {
     chatAvatarSmallEl.alt = character.name;
   }
   if (chatTitleNameEl) chatTitleNameEl.textContent = character.name;
-  if (chatBgEl) chatBgEl.style.background = character.cover;
+  // chat page background uses cover SVG
+  if (chatBgEl) chatBgEl.style.backgroundImage = `url("${character.cover}")`;
 
   updateFavoriteButton();
 }
@@ -714,8 +768,8 @@ function renderDiscoverGrid() {
   discoverGrid.innerHTML = filtered.map((item) => {
     const character = CHARACTERS[item.id];
     return `
-      <button class="discover-card" data-character="${item.id}" style="background:${character.cover};">
-        <img class="discover-card-avatar" src="${character.avatar}" alt="${character.name}" />
+      <button class="discover-card" data-character="${item.id}">
+        <img class="discover-card-avatar" src="${character.cover}" alt="${character.name}" />
         <div class="discover-card-content">
           <div class="discover-card-top">
             <strong>${character.name}</strong>
@@ -863,24 +917,57 @@ function initCreateActions() {
 
   tagButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
+      const wasActive = btn.classList.contains("active");
       btn.classList.toggle("active");
+      const selected = tagButtons.filter((t) => t.classList.contains("active")).length;
+      showToast(wasActive ? `已取消 "${btn.dataset.tag}"` : `已选择 "${btn.dataset.tag}" (${selected}/3)`);
     });
   });
 
   templateButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
+      templateButtons.forEach((t) => t.classList.remove("active"));
+      btn.classList.add("active");
       if (characterIdeaEl) {
-        characterIdeaEl.value = `我想创建一个“${btn.dataset.template}”类型的角色，整体气质偏${btn.dataset.template}，会陪我聊天，也能在我情绪低落时安慰我。`;
+        characterIdeaEl.value = `我想创建一个"${btn.dataset.template}"类型的角色, 气质偏${btn.dataset.template}, 会陪我聊天, 也能在我情绪低落时用它独特的方式安慰我.`;
       }
-      showToast(`已带入模板：${btn.dataset.template}`);
+      showToast(`已带入模板: ${btn.dataset.template}`);
     });
   });
+
+  // AI 助手真的生成一段描述
+  const aiAssistBtn = document.querySelector(".ai-assist-btn");
+  if (aiAssistBtn) {
+    aiAssistBtn.removeAttribute("data-demo");
+    const ideas = [
+      "一个白天在图书馆兼职的古典文学研究生, 冷面但内心很会照顾人, 会在深夜给你念几句诗.",
+      "气质安静的咖啡师, 话不多但听得很认真, 能从你点的咖啡看出你今天心情怎么样.",
+      "音乐人, 白天写曲, 深夜会写信给不认识的人, 文字偏私密, 适合深度聊天.",
+      "独立书店老板, 会给你推荐书单, 也会陪你讨论人生里那些想不通的事.",
+      "穿白衬衫的建筑师, 沉稳克制, 擅长把复杂的问题拆成三步让你一步步走.",
+    ];
+    let ideaIdx = 0;
+    aiAssistBtn.addEventListener("click", () => {
+      if (!characterIdeaEl) return;
+      characterIdeaEl.value = ideas[ideaIdx % ideas.length];
+      ideaIdx++;
+      characterIdeaEl.focus();
+      showToast("AI 已为你生成灵感");
+    });
+  }
 
   subtabBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       subtabBtns.forEach((item) => item.classList.remove("active"));
       btn.classList.add("active");
-      showToast(`${btn.textContent.trim()}模块已切换。`);
+      const key = btn.dataset.subtab || "role";
+      document.querySelectorAll(".subtab-panel").forEach((p) => {
+        const match = p.dataset.panel === key;
+        p.classList.toggle("active", match);
+        if (match) p.removeAttribute("hidden");
+        else p.setAttribute("hidden", "");
+      });
+      showToast(`已切换到 "${btn.textContent.trim()}" 模块`);
     });
   });
 }
@@ -892,6 +979,8 @@ function initDiscoverActions() {
       btn.classList.add("active");
       currentFilter = btn.textContent.trim();
       renderDiscoverGrid();
+      const count = document.querySelectorAll("#discover-grid .discover-card").length;
+      showToast(`筛选: ${currentFilter} · ${count} 位角色`);
     });
   });
 
@@ -918,16 +1007,50 @@ function initMembershipActions() {
   });
 }
 
-function initInboxActions() {
-  segmentBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      segmentBtns.forEach((item) => item.classList.remove("active"));
-      btn.classList.add("active");
-      showToast(`当前查看：${btn.textContent.trim()}`);
-    });
-  });
+const INBOX_DATA = {
+  chat: [
+    { cid: "liu", title: "柳慕然", sub: "昨晚 23:10 · 继续聊“今天很累”那条对话" },
+    { cid: "jiang", title: "江策", sub: "今天 09:26 · 他问你最近睡眠怎么样" },
+    { cid: "gu", title: "顾沉舟", sub: "昨天 14:02 · “要不要给你讲个冷笑话”" },
+  ],
+  likes: [
+    { cid: "su", title: "苏棠", sub: "你收藏了这位角色 · 3 天前" },
+    { cid: "liu", title: "柳慕然", sub: "你收藏了这位角色 · 1 周前" },
+  ],
+  notice: [
+    { cid: "sys", title: "欢迎来到撩咖", sub: "主人专享 · 所有角色免费对话, 尽情探索." },
+    { cid: "sys", title: "角色 “柳慕然” 更新", sub: "新增深夜模式 · 回复更温柔" },
+    { cid: "sys", title: "系统提醒", sub: "可以把自己的角色发布到市场, 让更多人陪伴你." },
+  ],
+};
+let currentSegment = "chat";
 
-  document.querySelectorAll(".list-item").forEach((item) => {
+function renderInbox() {
+  const list = document.getElementById("inbox-list");
+  if (!list) return;
+  const items = INBOX_DATA[currentSegment] || [];
+  if (!items.length) {
+    list.innerHTML = `<div class="empty-state">这里空荡荡的, 去发现页找一位角色聊聊吧.</div>`;
+    return;
+  }
+  list.innerHTML = items.map((it) => {
+    const char = CHARACTERS[it.cid];
+    const avatar = char
+      ? `<img class="list-avatar" src="${char.avatar}" alt="${char.name}" />`
+      : `<div class="list-avatar sys-avatar"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>`;
+    return `
+      <button class="list-item" data-character="${it.cid}">
+        ${avatar}
+        <div class="list-info">
+          <strong>${it.title}</strong>
+          <p>${it.sub}</p>
+        </div>
+        <span class="list-arrow">›</span>
+      </button>
+    `;
+  }).join("");
+
+  list.querySelectorAll(".list-item").forEach((item) => {
     item.addEventListener("click", () => {
       const characterId = item.dataset.character;
       if (characterId && CHARACTERS[characterId]) {
@@ -937,6 +1060,20 @@ function initInboxActions() {
       }
     });
   });
+}
+
+function initInboxActions() {
+  segmentBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      segmentBtns.forEach((item) => item.classList.remove("active"));
+      btn.classList.add("active");
+      currentSegment = btn.dataset.segment || "chat";
+      renderInbox();
+      const count = INBOX_DATA[currentSegment]?.length || 0;
+      showToast(`${btn.textContent.trim()} · 共 ${count} 条`);
+    });
+  });
+  renderInbox();
 }
 
 function initProfileActions() {
