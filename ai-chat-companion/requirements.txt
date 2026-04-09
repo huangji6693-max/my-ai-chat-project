@@ -6,3 +6,7 @@ sqlalchemy>=2.0,<3.0
 anthropic>=0.52.0
 python-dotenv>=1.0,<2.0
 requests>=2.32,<3.0
+
+# 测试依赖 (pytest 时使用, 生产可选)
+pytest>=8.0,<9.0
+httpx>=0.28,<1.0

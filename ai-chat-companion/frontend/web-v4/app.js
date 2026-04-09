@@ -395,6 +395,7 @@ function appendMessage(role, text) {
   row.appendChild(bubble);
   messagesEl.appendChild(row);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  return bubble;  // 返回 bubble 给流式调用方可以后续 append text
 }
 
 function showTypingIndicator() {
@@ -441,7 +442,8 @@ async function sendMessage(prefilledText = null) {
   showTypingIndicator();
 
   try {
-    const res = await fetch("/chat", {
+    // v4: 优先用 /chat/stream 流式, 边生成边显示 (打字机效果)
+    const res = await fetch("/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -451,19 +453,37 @@ async function sendMessage(prefilledText = null) {
       }),
     });
 
-    removeTypingIndicator();
-
-    if (!res.ok) {
+    if (!res.ok || !res.body) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || `HTTP ${res.status}`);
+      throw new Error(err.detail || err.error || `HTTP ${res.status}`);
     }
 
-    const data = await res.json();
-    const replyText = typeof data.reply === "string" ? data.reply.trim() : "";
-    if (!replyText) {
-      throw new Error("聊天接口返回了空内容");
+    removeTypingIndicator();
+    // 创建一个空的 assistant 气泡, 边收边填
+    const bubble = appendMessage("ai", "");
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let accumulated = "";
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      if (chunk) {
+        accumulated += chunk;
+        if (bubble) bubble.textContent = accumulated;
+        // 滚到底
+        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
     }
-    appendMessage("ai", replyText);
+    // flush 尾部
+    const tail = decoder.decode();
+    if (tail) {
+      accumulated += tail;
+      if (bubble) bubble.textContent = accumulated;
+    }
+    if (!accumulated.trim() && bubble) {
+      bubble.textContent = "我在呢, 你继续说。";
+    }
   } catch (err) {
     removeTypingIndicator();
     appendMessage("ai", `现在网络有点不稳定，我还在这。你可以稍后再试一次。（${err.message}）`);
