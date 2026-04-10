@@ -64,48 +64,72 @@ const CHARACTERS = {
     name: "柳慕然",
     style: "温柔 · 治愈",
     tagline: "陪伴中",
-    description: "白发、冷白皮、夜景公寓氛围，设定偏温柔强势，会认真接住情绪，也会主动推进对话。",
-    preview: "晚上风有点大，你回来的时候记得慢一点。我在这，先听你说今天发生了什么。",
+    description: "白发、冷白皮、夜景公寓氛围, 设定偏温柔强势, 会认真接住情绪, 也会主动推进对话.",
+    preview: "晚上风有点大, 你回来的时候记得慢一点. 我在这, 先听你说今天发生了什么.",
     persona: "luna",
     plays: "558.9万",
-    cover: makePortrait("柳", "慕然", "#3a1828", "#1a0812", "#ff6b88"),
-    avatar: makeMiniPortrait("柳", "#e63e5c", "#7a1830"),
+    age: "25",
+    mbti: "INFJ",
+    tags: ["治愈系", "夜景", "姐姐感", "高冷"],
+    quotes: ["我在这, 先听你说.", "别急, 一句一句慢慢来.", "今晚就让我陪你到睡着."],
+    avatar: "/static-v4/characters/liu.jpg",
+    cover: "/static-v4/characters/liu.jpg",
+    accentColor: "#e63e5c",
+    gradientColors: ["#3a1828", "#1a0812"],
   },
   jiang: {
     id: "jiang",
     name: "江策",
     style: "高冷 · 克制",
     tagline: "慢热守护",
-    description: "黑发、克制、偏高冷，会先观察你的情绪，再用简短但有力量的方式回应。",
-    preview: "你可以先不用把情绪整理好，直接发给我。我会帮你一点点理顺。",
+    description: "黑发、克制、偏高冷, 会先观察你的情绪, 再用简短但有力量的方式回应.",
+    preview: "你可以先不用把情绪整理好, 直接发给我. 我会帮你一点点理顺.",
     persona: "zhou",
     plays: "155.7万",
-    cover: makePortrait("江", "策", "#1a2a3e", "#060e1c", "#7ea3d6"),
-    avatar: makeMiniPortrait("江", "#4a6f9e", "#0e1a2e"),
+    age: "27",
+    mbti: "ISTJ",
+    tags: ["高冷", "克制", "守护系", "成熟"],
+    quotes: ["想说就说, 不想说也没关系.", "我不会走.", "先把自己照顾好."],
+    avatar: "/static-v4/characters/jiang.jpeg",
+    cover: "/static-v4/characters/jiang.jpeg",
+    accentColor: "#7ea3d6",
+    gradientColors: ["#1a2a3e", "#060e1c"],
   },
   gu: {
     id: "gu",
     name: "顾沉舟",
     style: "幽默 · 松弛",
     tagline: "会接梗",
-    description: "外表冷一点，聊天却很会接梗，适合你想轻松聊、又不想被说教的时候。",
-    preview: "你先说，我负责把今天那些乱七八糟的心情拆开，顺便逗你笑一下。",
+    description: "外表冷一点, 聊天却很会接梗, 适合你想轻松聊、又不想被说教的时候.",
+    preview: "你先说, 我负责把今天那些乱七八糟的心情拆开, 顺便逗你笑一下.",
     persona: "zhou",
     plays: "596.5万",
-    cover: makePortrait("顾", "沉舟", "#0e2e2a", "#04120f", "#5fd6c0"),
-    avatar: makeMiniPortrait("顾", "#2d9b8f", "#0a1f1c"),
+    age: "24",
+    mbti: "ENTP",
+    tags: ["幽默", "松弛", "学长感", "接梗"],
+    quotes: ["你这暴躁程度, 是缺糖了吧.", "来来来, 先笑一个.", "聊啥, 我都陪."],
+    avatar: "/static-v4/characters/gu.jpg",
+    cover: "/static-v4/characters/gu.jpg",
+    accentColor: "#5fd6c0",
+    gradientColors: ["#0e2e2a", "#04120f"],
   },
   su: {
     id: "su",
     name: "苏棠",
     style: "黏人 · 甜感",
     tagline: "会主动贴近你",
-    description: "更偏亲密陪伴和主动关心，适合下班后、深夜、失落时想有人一直在身边。",
-    preview: "今天是不是又一个人扛了很多？你先靠过来一点，我不催你慢慢说。",
+    description: "更偏亲密陪伴和主动关心, 适合下班后、深夜、失落时想有人一直在身边.",
+    preview: "今天是不是又一个人扛了很多? 你先靠过来一点, 我不催你慢慢说.",
     persona: "luna",
     plays: "13.6万",
-    cover: makePortrait("苏", "棠", "#3a0e22", "#1a050e", "#ff7da6"),
-    avatar: makeMiniPortrait("苏", "#c8416d", "#5c1030"),
+    age: "23",
+    mbti: "ENFJ",
+    tags: ["黏人", "甜系", "撒娇", "治愈"],
+    quotes: ["一整天没见你, 好想你.", "今天要吃什么呀, 我陪你.", "你靠过来一点.", "给你留了最后一块糖."],
+    avatar: "/static-v4/characters/su.jpg",
+    cover: "/static-v4/characters/su.jpg",
+    accentColor: "#ff7da6",
+    gradientColors: ["#3a0e22", "#1a050e"],
   },
 };
 
@@ -426,7 +450,7 @@ function resetViewStateForLogout() {
 function applyBottomBarVisibility(viewName) {
   const tabbar = document.getElementById("bottom-tabbar");
   if (!tabbar) return;
-  const hiddenViews = new Set(["auth", "phone-login", "chat-sheet"]);
+  const hiddenViews = new Set(["auth", "phone-login", "chat-sheet", "character-detail"]);
   // 清掉 inline display, 让 CSS (display: grid) 接管
   if (hiddenViews.has(viewName)) {
     tabbar.style.display = "none";
@@ -806,8 +830,160 @@ function renderDiscoverGrid() {
 
   discoverGrid.querySelectorAll(".discover-card").forEach((card) => {
     card.addEventListener("click", () => {
-      openChatForCharacter(card.dataset.character);
-      showToast(`已切换到 ${getCurrentCharacter().name}`);
+      const cid = card.dataset.character;
+      openCharacterDetail(cid);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// 角色详情页
+// ═══════════════════════════════════════════════════════════
+function openCharacterDetail(characterId) {
+  const c = CHARACTERS[characterId];
+  if (!c) return;
+  saveCharacterId(characterId);
+  renderCharacterDetail(c);
+  showView("character-detail");
+}
+
+function renderCharacterDetail(c) {
+  const el = (id) => document.getElementById(id);
+  const cover = el("detail-cover");
+  if (cover) {
+    cover.src = c.cover;
+    cover.alt = c.name;
+  }
+  const hero = el("detail-hero");
+  if (hero) {
+    hero.style.setProperty("--accent", c.accentColor || "#e63e5c");
+  }
+  el("detail-name").textContent = c.name;
+  el("detail-style").textContent = c.style;
+  el("detail-plays").textContent = c.plays;
+  el("detail-age").textContent = c.age || "—";
+  el("detail-mbti").textContent = c.mbti || "—";
+  el("detail-description").textContent = c.description;
+
+  const tagRow = el("detail-tags");
+  if (tagRow) {
+    tagRow.innerHTML = (c.tags || []).map((t) => `<span class="detail-tag">${t}</span>`).join("");
+  }
+  const quoteList = el("detail-quotes");
+  if (quoteList) {
+    quoteList.innerHTML = (c.quotes || []).map((q) => `<div class="detail-quote">"${q}"</div>`).join("");
+  }
+  // fav button state
+  const favBtn = el("detail-fav-btn");
+  if (favBtn) {
+    favBtn.classList.toggle("favorited", isFavorite(c.id));
+  }
+}
+
+function initCharacterDetailActions() {
+  document.getElementById("detail-start-chat")?.addEventListener("click", () => {
+    guardedEnter("chat-sheet");
+    window.setTimeout(() => chatInputEl?.focus(), 80);
+  });
+  document.getElementById("detail-fav-btn")?.addEventListener("click", () => {
+    const favorited = toggleFavorite(currentCharacterId);
+    showToast(favorited ? "已加入收藏" : "已取消收藏");
+    const el = document.getElementById("detail-fav-btn");
+    if (el) el.classList.toggle("favorited", favorited);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// 设置页
+// ═══════════════════════════════════════════════════════════
+function initSettingsActions() {
+  // 读取之前保存的设置
+  const SETTINGS_KEY = "v4_settings";
+  const loadSettings = () => {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"); } catch { return {}; }
+  };
+  const saveSettings = (s) => localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  const settings = loadSettings();
+
+  // 初始化 toggle 状态
+  document.querySelectorAll(".toggle-switch[data-toggle]").forEach((el) => {
+    const key = el.dataset.toggle;
+    if (settings[key] !== undefined) {
+      el.classList.toggle("active", !!settings[key]);
+    }
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const s = loadSettings();
+      const next = !el.classList.contains("active");
+      el.classList.toggle("active", next);
+      s[key] = next;
+      saveSettings(s);
+      showToast(next ? `已开启 ${el.closest(".settings-row")?.querySelector(".settings-row-label")?.textContent || ""}` : `已关闭 ${el.closest(".settings-row")?.querySelector(".settings-row-label")?.textContent || ""}`);
+    });
+  });
+
+  // 主题色切换
+  document.querySelectorAll(".theme-swatch").forEach((sw) => {
+    sw.addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelectorAll(".theme-swatch").forEach((s) => s.classList.remove("active"));
+      sw.classList.add("active");
+      const theme = sw.dataset.theme;
+      document.body.dataset.theme = theme;
+      const s = loadSettings();
+      s.theme = theme;
+      saveSettings(s);
+      const themeNames = { rose: "暗夜玫瑰", sky: "深海蓝", mint: "薄雾青", amber: "琥珀金" };
+      showToast(`已切换到 ${themeNames[theme]}`);
+    });
+  });
+
+  // 加载时应用保存的主题
+  if (settings.theme) {
+    document.body.dataset.theme = settings.theme;
+    document.querySelectorAll(".theme-swatch").forEach((s) => {
+      s.classList.toggle("active", s.dataset.theme === settings.theme);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// 故事库
+// ═══════════════════════════════════════════════════════════
+const STORIES = [
+  { cid: "liu", title: "深夜的电台", sub: "一个失眠的夜晚, 她把自己的声音变成了安眠药.", duration: "12 分钟" },
+  { cid: "jiang", title: "校门口的雨", sub: "高中最后一场雨, 他默默走在你身后把伞偏过来.", duration: "8 分钟" },
+  { cid: "gu", title: "便利店的盒饭", sub: "加班到凌晨的你碰见了和你一样狼狈的他.", duration: "15 分钟" },
+  { cid: "su", title: "回家的末班车", sub: "她抢到了最后一个座位, 却把位置留给了你.", duration: "10 分钟" },
+  { cid: "liu", title: "陪你跨年", sub: "城市的烟花里, 她说 \"今年最想陪的人是你\".", duration: "20 分钟" },
+  { cid: "gu", title: "猫与咖啡", sub: "他养的猫意外地和你很合得来.", duration: "6 分钟" },
+];
+
+function renderStoriesPage() {
+  const page = document.getElementById("stories-page");
+  if (!page) return;
+  page.innerHTML = STORIES.map((s) => {
+    const c = CHARACTERS[s.cid];
+    return `
+      <button class="story-card" data-character="${s.cid}">
+        <img class="story-cover" src="${c.cover}" alt="${c.name}" />
+        <div class="story-content">
+          <div class="story-character">${c.name} · ${c.style}</div>
+          <div class="story-title">${s.title}</div>
+          <div class="story-sub">${s.sub}</div>
+          <div class="story-duration">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${s.duration}
+          </div>
+        </div>
+      </button>
+    `;
+  }).join("");
+  page.querySelectorAll(".story-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const cid = card.dataset.character;
+      openChatForCharacter(cid);
+      showToast(`开始和 ${CHARACTERS[cid].name} 的故事`);
     });
   });
 }
@@ -1202,8 +1378,11 @@ initMembershipActions();
 initInboxActions();
 initProfileActions();
 initChatActions();
+initCharacterDetailActions();
+initSettingsActions();
 loadDraftCharacter();
 renderCurrentCharacter();
 renderDiscoverGrid();
+renderStoriesPage();
 autoResizeInput();
 showView("auth");

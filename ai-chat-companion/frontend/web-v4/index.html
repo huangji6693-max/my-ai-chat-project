@@ -383,11 +383,20 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </span>
           </button>
-          <button class="menu-row" data-demo="设置入口已预留。">
+          <button class="menu-row" data-nav="settings">
             <span class="menu-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </span>
-            <span class="menu-label">设置与反馈</span>
+            <span class="menu-label">设置</span>
+            <span class="menu-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+          </button>
+          <button class="menu-row" data-nav="stories">
+            <span class="menu-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </span>
+            <span class="menu-label">故事库</span>
             <span class="menu-arrow">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </span>
@@ -403,6 +412,190 @@
           </button>
         </div>
       </div>
+    </section>
+
+    <!-- ═══════════════ 角色详情 ═══════════════ -->
+    <section class="screen" data-view="character-detail">
+      <div class="detail-hero" id="detail-hero">
+        <img class="detail-cover" id="detail-cover" src="" alt="" />
+        <div class="detail-cover-overlay"></div>
+        <header class="detail-topbar">
+          <button class="top-icon light-icon" data-nav="discover" aria-label="返回">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="top-icon light-icon" id="detail-fav-btn" aria-label="收藏">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/></svg>
+          </button>
+        </header>
+        <div class="detail-head">
+          <h1 class="detail-name" id="detail-name">柳慕然</h1>
+          <div class="detail-style" id="detail-style">温柔 · 治愈</div>
+          <div class="detail-stats">
+            <div class="detail-stat">
+              <span class="detail-stat-num" id="detail-plays">558.9万</span>
+              <span class="detail-stat-label">被聊过</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-num" id="detail-age">25</span>
+              <span class="detail-stat-label">角色年龄</span>
+            </div>
+            <div class="detail-stat">
+              <span class="detail-stat-num" id="detail-mbti">INFJ</span>
+              <span class="detail-stat-label">性格</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <div class="section-title">角色标签</div>
+          <div class="detail-tag-row" id="detail-tags"></div>
+        </div>
+        <div class="detail-section">
+          <div class="section-title">角色介绍</div>
+          <p class="detail-description" id="detail-description"></p>
+        </div>
+        <div class="detail-section">
+          <div class="section-title">TA 的开场白</div>
+          <div class="detail-quote-list" id="detail-quotes"></div>
+        </div>
+        <button class="wide-btn btn-dark" id="detail-start-chat">开始聊天</button>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 设置页 ═══════════════ -->
+    <section class="screen" data-view="settings">
+      <header class="simple-topbar">
+        <button class="top-icon" data-nav="profile" aria-label="返回">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="simple-title">设置</div>
+        <div class="top-icon ghost"></div>
+      </header>
+      <div class="settings-page">
+        <div class="settings-group">
+          <div class="settings-group-title">通知</div>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">推送通知</span>
+              <span class="settings-row-sub">角色主动消息与系统通知</span>
+            </div>
+            <div class="toggle-switch" data-toggle="push"><span></span></div>
+          </label>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">消息声音</span>
+              <span class="settings-row-sub">收到新消息时播放提示音</span>
+            </div>
+            <div class="toggle-switch active" data-toggle="sound"><span></span></div>
+          </label>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">震动反馈</span>
+              <span class="settings-row-sub">按键触感反馈</span>
+            </div>
+            <div class="toggle-switch active" data-toggle="haptic"><span></span></div>
+          </label>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">外观</div>
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">主题</span>
+              <span class="settings-row-sub">当前 · 暗夜玫瑰</span>
+            </div>
+            <div class="theme-swatches">
+              <button class="theme-swatch active" data-theme="rose" style="background: linear-gradient(135deg, #e63e5c, #1a0812);" aria-label="暗夜玫瑰"></button>
+              <button class="theme-swatch" data-theme="sky" style="background: linear-gradient(135deg, #4a6f9e, #060e1c);" aria-label="深海蓝"></button>
+              <button class="theme-swatch" data-theme="mint" style="background: linear-gradient(135deg, #2d9b8f, #04120f);" aria-label="薄雾青"></button>
+              <button class="theme-swatch" data-theme="amber" style="background: linear-gradient(135deg, #e8c96a, #1a1408);" aria-label="琥珀金"></button>
+            </div>
+          </div>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">字体大小</span>
+              <span class="settings-row-sub">适中</span>
+            </div>
+            <div class="settings-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </label>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">语言</span>
+              <span class="settings-row-sub">简体中文</span>
+            </div>
+            <div class="settings-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </label>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">账号与隐私</div>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">对话云端同步</span>
+              <span class="settings-row-sub">换设备也能继续聊</span>
+            </div>
+            <div class="toggle-switch active" data-toggle="sync"><span></span></div>
+          </label>
+          <label class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">记忆增强</span>
+              <span class="settings-row-sub">让 TA 记住更长的对话</span>
+            </div>
+            <div class="toggle-switch" data-toggle="memory"><span></span></div>
+          </label>
+          <button class="settings-row" data-demo="导出数据功能已预留。">
+            <div class="settings-row-left">
+              <span class="settings-row-label">导出聊天记录</span>
+              <span class="settings-row-sub">打包为 JSON 下载</span>
+            </div>
+            <div class="settings-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">关于</div>
+          <button class="settings-row" data-demo="用户协议预留。">
+            <div class="settings-row-left">
+              <span class="settings-row-label">用户协议</span>
+            </div>
+            <div class="settings-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+          <button class="settings-row" data-demo="隐私政策预留。">
+            <div class="settings-row-left">
+              <span class="settings-row-label">隐私政策</span>
+            </div>
+            <div class="settings-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+          <div class="settings-row">
+            <div class="settings-row-left">
+              <span class="settings-row-label">版本号</span>
+            </div>
+            <span class="settings-version">v0.4.0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ 故事库 ═══════════════ -->
+    <section class="screen" data-view="stories">
+      <header class="simple-topbar">
+        <div class="simple-title align-left">故事库</div>
+        <button class="top-icon" data-demo="搜索预留。" aria-label="搜索">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+      </header>
+      <div class="stories-page" id="stories-page"></div>
     </section>
 
     <!-- ═══════════════ 聊天页 ═══════════════ -->
